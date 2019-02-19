@@ -1,0 +1,145 @@
+---
+title: "README"
+output:
+  html_document: default
+  word_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# TidyABS 
+
+TidyABS converts excel sheets relased by the Australian Bureau of Statistics into a tidy data format. 
+
+The typical workflow of this package requires 3 steps.  
+1. Convert .xls files to .xlsx  
+2. Unmerge cells (with this VBA code)  
+3. Use `tidyABS::get_tidy_table`  
+
+Below are a few examples.
+
+## Cause of death data
+
+The ABS annual releases cause of death data. Here's a snapshot of the first table of the Australian release:
+<!-- ![image]("data/ABS-COD-T1.png") -->
+
+This data is difficult to read into R for several reasons:
+1. The table is sourounded by metadata, with relevant values beginning in the 5th row. 
+2. Some information is represented by formatting. The heirarchy of row names is indicated by its boldness and indentation.
+3. Some information is reperensented in comments --- for exmample, whether figures are estimated with substantial standard error. 
+4. Some cells are merged. 
+
+This data can be downloaded from this [site](http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/3303.02017?OpenDocument).  
+
+Open the file and select save as .xlsx
+
+
+To unmerge cells, press `ALT+F11`, click `This Workbook' in the left-hand pane and copy the following [this text](http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/3303.02017?OpenDocument): 
+
+
+
+
+```{r x02}
+library("devtools")
+library(roxygen2)
+
+document()
+devtools::install()
+
+library("tidyxl")
+library("tidyverse")
+library("unpivotr")
+library("hrbrthemes")
+library("magrittr")
+library(tidyABS)
+
+```
+
+
+```{r x05}
+example_datasets <- 
+ tribble(
+     ~file_location, ~sheet,
+    "C:/Users/Ian/Data/r-projects/temp/data/92080DO001_1231201610.xlsx","Table_6",
+    "C:/Users/Ian/Data/r-projects/temp/data/4655006_2018.xlsx","Table 6.2",
+    "C:/Users/Ian/Data/r-projects/temp/data/41250ds0010_201809.xlsx","Table 10.4",
+    "C:/Users/Ian/Data/r-projects/temp/data/81550do001_201617.xlsx","Table_1")
+```
+
+
+```{r x03}
+
+transport <- 
+  get_tidy_table(path = example_datasets$file_location[[1]],sheets = example_datasets$sheet[[1]])
+
+transport <- get_tidyABS_components(path = example_datasets$file_location[[1]],example_datasets$sheet[[1]])
+
+get_tidyABS_components(path = example_datasets$file_location[[1]],example_datasets$sheet[[1]])
+
+
+
+transport$rowname_df$direction[1] <- "NNW"
+
+transport_df <- 
+  create_tidytable(header_df = transport$header_df,
+                   rowname_df = transport$rowname_df,
+                   meta_df = transport$meta_df, 
+                   tabledata = transport$tabledata ) 
+
+buses_df <- 
+  transport_df %>% 
+  set_names(c("row", "col", "comment", "value", "measure", "unit", "state","vehicle", "total", 
+              "abs", "file_no", "release_time", "table_num")) %>% 
+  filter(str_detect(unit,"l"),is.na(total),vehicle == "Buses",measure == "Petrol") %>% 
+  mutate(state = fct_reorder(state, value )) 
+
+buses_df %>% 
+  ggplot(aes(y = value, x = measure, fill = state)) + geom_col(position = "dodge") + 
+  coord_flip() + hrbrthemes::theme_ipsum() 
+  
+
+
+```
+
+
+```{r}
+tax_df  <- get_tidy_table(path = example_datasets$file_location[[2]],example_datasets$sheet[[2]])
+
+tax_df %>% 
+  set_names(c("row", "col", "comment", "value", "ABS", 
+              "file", "release_time", "table_name", "year",
+              "industry", "total", "Australia")) %>% 
+  mutate(year = str_extract(year,"[0-9]{4}") %>% as.integer) %>% 
+  filter(is.na(total),industry != "All industries") -> 
+  tax_plot_df 
+  
+tax_plot_df  %>% 
+  ggplot(aes(x = year, y = value, color = industry)) + geom_line()
+  
+  
+tax_plot_df %>% group_by(industry) %>% 
+  mutate(first_year_value = sum(ifelse(year == 2003,value, NA ),na.rm = TRUE)) %>% 
+  mutate(value = value/first_year_value) %>% 
+  ggplot(aes(x = year, y = value, color = industry)) + geom_line()
+  
+  
+```
+
+
+
+## Including Plots
+
+```{r x01}
+
+get_tidy_table(path = example_datasets$file_location[[3]],example_datasets$sheet[[3]]) %>% View
+
+sheet <- tidyxl::xlsx_cells(example_datasets$file_location[[3]],example_datasets$sheet[[3]])
+formats <- tidyxl::xlsx_formats(example_datasets$file_location[[3]])
+
+
+```
+
