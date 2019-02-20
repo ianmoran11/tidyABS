@@ -4,14 +4,14 @@
 \alias{get_meta_df}
 \title{get metadata df}
 \usage{
-get_meta_df(sheet, table_ref, header_df, formats)
+get_meta_df(sheet, value_ref, col_groups, formats)
 }
 \arguments{
 \item{sheet}{sheet object read in by \code{tidyxl::xlsx_cells}}
 
-\item{table_ref}{data frame representing corners of numeric cells in excel sheet}
+\item{value_ref}{data frame representing corners of numeric cells in excel sheet}
 
-\item{header_df}{format object read in by \code{tidyxl::xlsx_cells}}
+\item{col_groups}{format object read in by \code{tidyxl::xlsx_cells}}
 
 \item{formats}{format object read in by \code{tidyxl::xlsx_cells}}
 }

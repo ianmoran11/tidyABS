@@ -4,7 +4,7 @@
 \alias{create_tidytable}
 \title{create_tidytable}
 \usage{
-create_tidytable(header_df, rowname_df, meta_df, tabledata)
+create_tidytable(col_groups, row_groups, meta_df, tabledata)
 }
 \description{
 Reshapes the data using unpivotr functions (which are specified in the head dataframes)

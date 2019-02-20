@@ -4,9 +4,11 @@
 \alias{get_row_sum}
 \title{Get row sum}
 \usage{
-get_row_sum(x)
+get_row_sum(data, sheet)
 }
 \arguments{
+\item{sheet}{a row_name_df object}
+
 \item{x}{a row_name_df object}
 }
 \description{

@@ -73,16 +73,61 @@ example_datasets <-
 
 ```{r x03}
 
-transport <- 
-get_tidy_table(path = example_datasets$file_location[[1]],sheets = example_datasets$sheet[[1]])
 
-components <- get_tidyABS_components(path = example_datasets$file_location[[1]],example_datasets$sheet[[1]])
+tidy_ABS_sheet(path = example_datasets$file_location[[1]],sheets = example_datasets$sheet[[1]])
+  
+abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[1]],
+                                         example_datasets$sheet[[1]])
 
-transport <- get_tidyABS_components(path = example_datasets$file_location[[1]],example_datasets$sheet[[1]])
+  abs_sheet_processed %>% plot_table_components()
+  abs_sheet_processed %>% assemble_table_components()
+  
+  
+#-----------------------------------------
+  
+get_tidy_table(path = example_datasets$file_location[[2]],sheets = example_datasets$sheet[[2]]) 
+  
+abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[2]],
+                                         example_datasets$sheet[[2]])
 
-get_tidyABS_components(path = example_datasets$file_location[[1]],example_datasets$sheet[[1]])
+  abs_sheet_processed %>% plot_table_components()
+  abs_sheet_processed %>% assemble_table_components()
+
+col_groups
+get_table_references()
+
+#------------------------------------------
 
 
+
+get_tidy_table(path = example_datasets$file_location[[3]],sheets = example_datasets$sheet[[3]]) 
+  
+abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[3]],
+                                         example_datasets$sheet[[3]])
+
+abs_sheet_processed %>% inspect_table_components()  
+abs_sheet_processed %>% plot_table_components()
+  abs_sheet_processed %>% assemble_table_components()
+  
+  abs_sheet_processed # Need a change direction function
+  abs_sheet_processed # Need to nominate table points 
+  
+#----------------------------------------------------------------------
+  
+get_tidy_table(path = example_datasets$file_location[[4]],sheets = example_datasets$sheet[[4]]) 
+
+abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[4]],
+                                         example_datasets$sheet[[4]])
+
+abs_sheet_processed %>% plot_table_components()
+abs_sheet_processed %>% inspect_table_components()  
+abs_sheet_processed %>% assemble_table_components() %>% View
+  
+abs_sheet_processed # Need a change direction function
+abs_sheet_processed # Need to nominate table points 
+
+  
+  
 
 transport$rowname_df$direction[1] <- "NNW"
 

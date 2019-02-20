@@ -4,12 +4,12 @@
 \alias{get_tabledata}
 \title{get_tabledata}
 \usage{
-get_tabledata(sheet, table_ref)
+get_tabledata(sheet, value_ref)
 }
 \arguments{
 \item{sheet}{sheet object read in by \code{tidyxl::xlsx_cells}}
 
-\item{table_ref}{data frame representing corners of numeric cells in excel sheet}
+\item{value_ref}{data frame representing corners of numeric cells in excel sheet}
 }
 \description{
 Extracts the numeric data from the table.

@@ -38,10 +38,12 @@ fill_in_blanks <- function(sheet){
 #'
 #' Identify which cells are the numeric table cells by finding the corners
 #'
-#' @param x sheet object read in by `tidyxl::xlsx_cells`
+#' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 
-get_value_references <- function(x){
-  x %>%
+get_value_references <- function(sheet){
+
+
+  sheet %>%
     filter(!is.na(numeric)) %>%
     summarise(
       min_row = min(row), max_row = max(row),
@@ -66,8 +68,10 @@ get_indent <- function(local_format_id, formats){
 #' @param formats format object read in by `tidyxl::xlsx_cells`
 
 
-get_header_df <- function(sheet, value_ref,formats){
+get_col_groups <- function(sheet, value_ref,formats){
 
+
+col_df <-
   sheet %>%
     filter(!is_blank) %>%
     filter(col <= value_ref$max_col) %>%
@@ -86,11 +90,6 @@ get_header_df <- function(sheet, value_ref,formats){
     group_by(row_temp,indent,bold,italic) %>%
     nest() %>% ungroup() %>%
     mutate(row_no_name =  row_temp - min(row_temp) + 1) %>%
-    mutate(header_name = paste0("header_",
-                                str_pad(row_no_name,2,"left","0"),
-                                "_in",indent,
-                                "_b", as.integer(bold),
-                                "_it", as.integer(italic))) %>%
     mutate(col_group = paste0("col_group_",str_pad(row_number(),2,side = "left","0"))) %>%
     mutate(data=map2(data,col_group,
                      function(data,col_group){
@@ -100,6 +99,13 @@ get_header_df <- function(sheet, value_ref,formats){
                        temp_df %>%  select(-character)})) %>%
     mutate(direction = "N") %>%
     dplyr::select(col_group,direction,data,indent,bold,italic)
+
+  col_df %>%
+    mutate(data_summary =data %>%
+             map(~ .x %>% summarise(min_col = min(col,na.rm = T),max_col = max(col,na.rm = T),
+                                    min_row = min(row,na.rm = T),max_row = max(row,na.rm = T)) )) %>%
+    unnest(data_summary)
+
 }
 
 
@@ -112,22 +118,22 @@ get_header_df <- function(sheet, value_ref,formats){
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
-#' @param header_df format object read in by `tidyxl::xlsx_cells`
+#' @param col_groups format object read in by `tidyxl::xlsx_cells`
 
 
-get_rowname_df <- function(sheet,value_ref,header_df,formats){
+get_row_groups <- function(sheet,value_ref,col_groups,formats){
 
   ## Used for debugging
   # sheet <- sheet
   # value_ref <- value_ref
   # formats <- formats
-  # header_df <- header_df
+  # col_groups <- col_groups
 
   row_name_df <-
   sheet %>%
     filter(!is_blank,
            row <= value_ref$max_row,
-           row > max(header_df$row_temp),
+           row > max(col_groups$max_row),
            col < value_ref$min_col ) %>%
     mutate(col_temp = col ) %>%
     mutate(indent = local_format_id %>%
@@ -140,14 +146,8 @@ get_rowname_df <- function(sheet,value_ref,header_df,formats){
              map(~ formats$local$font[["italic"]][[.x]]) %>%
              unlist) %>%
     group_by(col_temp,indent,bold,italic) %>% nest() %>% ungroup() %>%
-    mutate(col_no_name =  col_temp - min(col_temp) + 1) %>%
-    arrange(indent,italic,bold) %>%
+    arrange(col_temp,indent,italic,bold) %>%
     mutate(row_group = paste0("row_group_",str_pad(row_number(),2,side = "left","0"))) %>%
-    mutate(header_name = paste0("row_",
-                                str_pad(col_no_name,2,"left","0"),
-                                "_in",indent,
-                                "_b", as.integer(bold),
-                                "_it", as.integer(italic))) %>%
     mutate(data=map2(data,row_group,
                      function(data,row_group){
 
@@ -161,7 +161,11 @@ row_name_df <-
 
 
 row_name_df %>% mutate(direction = ifelse(row_sum == 0,"NNW","W")) %>%
-  dplyr::select(col_group,direction,data,indent,bold,italic)
+  dplyr::select(row_group,direction,data,indent,bold,italic) %>%
+  mutate(data_summary =data %>%
+           map(~ .x %>% summarise(min_col = min(col,na.rm = T),max_col = max(col,na.rm = T),
+                                  min_row = min(row,na.rm = T),max_row = max(row,na.rm = T)) )) %>%
+  unnest(data_summary)
 
 
 
@@ -179,7 +183,7 @@ get_row_sum <- function(data,sheet){
 
   data %>%
     mutate(row_sum_values = map_dbl(row,
-                                    function(x){summarise(filter(sheet,row == x ),filled = sum(!is_blank, na.rm = T))$filled})) %>%
+                                    function(x){summarise(filter(sheet,row == x ),filled = sum(numeric, na.rm = T))$filled})) %>%
     summarise(row_sum_values =  sum(row_sum_values, na.rm = T)) %>% pull(row_sum_values)
 }
 
@@ -193,20 +197,20 @@ get_row_sum <- function(data,sheet){
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
-#' @param header_df format object read in by `tidyxl::xlsx_cells`
+#' @param col_groups format object read in by `tidyxl::xlsx_cells`
 
 
-get_meta_df <- function(sheet,value_ref,header_df,formats){
+get_meta_df <- function(sheet,value_ref,col_groups,formats){
 
   ## Used for debugging
   # sheet <- master_df_01$sheet[[100]]
   # value_ref <- master_df_01$value_ref[[100]]
   # formats <- master_df_01$formats[[100]]
-  # header_df <- master_df_01$header_df[[100]]
+  # col_groups <- master_df_01$col_groups[[100]]
 
   sheet %>%
     filter(!is_blank,
-           row <= min(header_df$row_temp),
+           row <= max(col_groups$max_row),
            col < value_ref$min_col ) %>%
     mutate(col_temp = col ) %>%
     mutate(row_temp = row ) %>%
@@ -235,7 +239,11 @@ get_meta_df <- function(sheet,value_ref,header_df,formats){
                        temp_df[[meta_data]] <- temp_df$character
                        temp_df %>%  select(-character)})) %>%
     mutate(direction = "WNW") %>%
-    dplyr::select(meta_data,direction,data,indent,bold,italic)
+    dplyr::select(meta_data,direction,data,indent,bold,italic) %>%
+    mutate(data_summary =data %>%
+             map(~ .x %>% summarise(min_col = min(col,na.rm = T),max_col = max(col,na.rm = T),
+                                    min_row = min(row,na.rm = T),max_row = max(row,na.rm = T)) )) %>%
+    unnest(data_summary)
 }
 
 
@@ -264,28 +272,40 @@ get_tabledata <- function(sheet,value_ref){
 #' create_tidytable
 #'
 #' Reshapes the data using unpivotr functions (which are specified in the head dataframes)
-#' @param header_df
-#' @param rowname_df
+#' @param col_groups
+#' @param row_groups
 #' @param meta_df
 #' @param tabledata
 
 
-create_tidytable <- function(header_df,rowname_df,meta_df,tabledata){
+create_tidytable <- function(col_groups,row_groups,meta_df,tabledata){
 
-  bind_rows(header_df,rowname_df,meta_df) -> header_df
+  bind_rows(col_groups,row_groups,meta_df) -> col_groups
 
 
   tabledata <- tabledata %>% group_by(row,col,comment) %>% nest() %>%
     mutate(value  = data %>% map_chr(~ .x[[1,1]])) %>% select(-data)
 
-  map2(header_df$data,header_df$direction,
-       function(header_data, direction){
-         unpivotr::enhead(data_cells = tabledata,
-                          header_cells =  header_data,
-                          direction =direction)
-       }) %>%
+  map2(col_groups$data,col_groups$direction, ~ enhead_tabledata(header_data= .x,direction = .y, values = tabledata)) %>%
     reduce(full_join)
 
+}
+
+
+#' Enhead tabledata
+#'
+#' Reshapes the data using unpivotr functions (which are specified in the head dataframes)
+#' @param header_data path to .xlsx file
+#' @param direction sheet nominated for tidying
+#' @param values sheet nominated for tidying
+#'
+#' @export
+
+
+enhead_tabledata <-  function(header_data, direction,values = tabledata){
+  unpivotr::enhead(data_cells = values,
+                   header_cells =  header_data,
+                   direction =direction)
 }
 
 
@@ -297,7 +317,7 @@ create_tidytable <- function(header_df,rowname_df,meta_df,tabledata){
 #'
 #' @export
 
-get_tidy_table <- function(path,sheets ){
+tidy_ABS_sheet <- function(path,sheets ){
 
   sheet <-  tidyxl::xlsx_cells(path = path,sheets = sheets)
   formats <-  tidyxl::xlsx_formats(path)
@@ -314,13 +334,13 @@ get_tidy_table <- function(path,sheets ){
 
   value_ref <- sheet %>% get_value_references()
 
-  header_df <- get_header_df(sheet = sheet,value_ref = value_ref,formats =formats  )
-  rowname_df <- get_rowname_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
-  meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
+  col_groups <- get_col_groups(sheet = sheet,value_ref = value_ref,formats =formats  )
+  row_groups <- get_row_groups(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
+  meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
   tabledata <- get_tabledata(sheet = sheet, value_ref = value_ref)
 
 
-  create_tidytable(header_df =header_df,meta_df = meta_df,rowname_df =rowname_df,tabledata =   tabledata)
+  create_tidytable(col_groups =col_groups,meta_df = meta_df,row_groups =row_groups,tabledata =   tabledata)
 
 }
 
@@ -335,7 +355,7 @@ get_tidy_table <- function(path,sheets ){
 #'
 #' @export
 
-get_tidyABS_components <- function(path,sheets ){
+process_ABS_sheet <- function(path,sheets ){
 
   sheet <-  tidyxl::xlsx_cells(path = path,sheets = sheets)
   formats <-  tidyxl::xlsx_formats(path)
@@ -352,17 +372,81 @@ get_tidyABS_components <- function(path,sheets ){
 
   value_ref <- sheet %>% get_value_references()
 
-  header_df <- get_header_df(sheet = sheet,value_ref = value_ref,formats =formats  )
-  rowname_df <- get_rowname_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
-  meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
+  col_groups <- get_col_groups(sheet = sheet,value_ref = value_ref,formats =formats  )
+  row_groups <- get_row_groups(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
+  meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
   tabledata <- get_tabledata(sheet = sheet, value_ref = value_ref)
 
-  list(header_df= header_df,rowname_df=rowname_df,meta_df=meta_df,tabledata=tabledata )
+  list(col_groups= col_groups,row_groups=row_groups,meta_df=meta_df,tabledata=tabledata )
 
 
 
 }
 
 
+#' Plot table components
+#'
+#' Produces the various tidyABS compentents
+#' @param abs_sheet_processed path to .xlsx file
+#'
+#' @export
 
 
+plot_table_components <- function(abs_sheet_processed){
+  temp <-
+    abs_sheet_processed %>% .[1:3]  %>%
+    map( ~ .x %>% dplyr::select(type = 1,direction,data)) %>%
+    bind_rows() %>% unnest()
+
+  value_cols <- names(temp)[str_detect(names(temp),"^col_|^row_|^meta_")]
+
+  temp_01 <-
+    temp %>%
+    mutate(value = coalesce(!!!syms(value_cols))) %>%
+    select(type,direction,row,col,value) %>%
+    bind_rows(abs_sheet_processed[[4]] %>% mutate(type = "data"))
+
+  temp_01 %>%
+    ggplot(aes(x = col, y = -row, fill = str_to_title(str_replace_all(type,"_"," ")),
+               label = paste0(ifelse(type!="data",paste0("(",direction,")"),"")))) +
+    geom_tile() +
+    geom_text(size = 3) +
+    xlim(limits = c(.5,10)) +
+    ylim(limits = c(-30,-.5)) +
+    theme_minimal() +
+    labs(fill="Cell Type", y = "Row", x = "Column")
+}
+
+#' Inspect table components
+#'
+#' Produces the various tidyABS compentents
+#' @param abs_sheet_processed path to .xlsx file
+#'
+#' @export
+
+inspect_table_components <-   function(abs_sheet_processed){
+  abs_sheet_processed %>% map(~.x$data  %>% map(~ .x %>% pull(3) %>% unique))
+}
+
+
+
+
+#' assemble_table_components
+#'
+#' Reshapes the data using unpivotr functions (which are specified in the head dataframes)
+#' @param table_componsents
+#'
+#' @export
+
+assemble_table_components <- function(table_componsents){
+
+  bind_rows(table_componsents[1:3]) -> col_groups
+
+
+  tabledata <- table_componsents[[4]] %>% group_by(row,col,comment) %>% nest() %>%
+    mutate(value  = data %>% map_chr(~ .x[[1,1]])) %>% select(-data)
+
+  map2(col_groups$data,col_groups$direction, ~ enhead_tabledata(header_data= .x,direction = .y, values = tabledata)) %>%
+    reduce(full_join)
+
+}
