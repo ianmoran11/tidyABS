@@ -127,7 +127,7 @@ abs_sheet_processed # Need a change direction function
 abs_sheet_processed # Need to nominate table points 
 
   
-  
+shell('git config --global user.email "ian.moran11@gmail.com"')
 
 transport$rowname_df$direction[1] <- "NNW"
 
