@@ -74,7 +74,9 @@ example_datasets <-
 ```{r x03}
 
 transport <- 
-  get_tidy_table(path = example_datasets$file_location[[1]],sheets = example_datasets$sheet[[1]])
+get_tidy_table(path = example_datasets$file_location[[1]],sheets = example_datasets$sheet[[1]])
+
+components <- get_tidyABS_components(path = example_datasets$file_location[[1]],example_datasets$sheet[[1]])
 
 transport <- get_tidyABS_components(path = example_datasets$file_location[[1]],example_datasets$sheet[[1]])
 

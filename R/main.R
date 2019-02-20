@@ -40,7 +40,7 @@ fill_in_blanks <- function(sheet){
 #'
 #' @param x sheet object read in by `tidyxl::xlsx_cells`
 
-get_table_references <- function(x){
+get_value_references <- function(x){
   x %>%
     filter(!is.na(numeric)) %>%
     summarise(
@@ -62,17 +62,17 @@ get_indent <- function(local_format_id, formats){
 #'          2. groups them according to their indenting, bold and italic formatting
 #'          3. Specifies the unpivotr function specifying the direction of the header w.r.t. table data
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
-#' @param table_ref data frame representing corners of numeric cells in excel sheet
+#' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
 
 
-get_header_df <- function(sheet, table_ref,formats){
+get_header_df <- function(sheet, value_ref,formats){
 
   sheet %>%
     filter(!is_blank) %>%
-    filter(col <= table_ref$max_col) %>%
-    filter(col >= table_ref$min_col) %>%
-    filter(row < table_ref$min_row ) %>%
+    filter(col <= value_ref$max_col) %>%
+    filter(col >= value_ref$min_col) %>%
+    filter(row < value_ref$min_row ) %>%
     mutate(row_temp = row) %>%
     mutate(indent = local_format_id %>%
              map_dbl(possibly({~ formats$local$alignment[["indent"]][[.x]]},0)) %>%
@@ -91,13 +91,15 @@ get_header_df <- function(sheet, table_ref,formats){
                                 "_in",indent,
                                 "_b", as.integer(bold),
                                 "_it", as.integer(italic))) %>%
-    mutate(data=map2(data,header_name,
-                     function(data,header_name){
+    mutate(col_group = paste0("col_group_",str_pad(row_number(),2,side = "left","0"))) %>%
+    mutate(data=map2(data,col_group,
+                     function(data,col_group){
 
                        temp_df <- data %>% select(row,col,character)
-                       temp_df[[header_name]] <- temp_df$character
+                       temp_df[[col_group]] <- temp_df$character
                        temp_df %>%  select(-character)})) %>%
-    mutate(direction = "N")
+    mutate(direction = "N") %>%
+    dplyr::select(col_group,direction,data,indent,bold,italic)
 }
 
 
@@ -108,25 +110,25 @@ get_header_df <- function(sheet, table_ref,formats){
 #'          2. groups them according to their indenting, bold and italic formatting
 #'          3. Specifies the unpivotr function specifying the direction of the header w.r.t. table data
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
-#' @param table_ref data frame representing corners of numeric cells in excel sheet
+#' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
 #' @param header_df format object read in by `tidyxl::xlsx_cells`
 
 
-get_rowname_df <- function(sheet,table_ref,header_df,formats){
+get_rowname_df <- function(sheet,value_ref,header_df,formats){
 
   ## Used for debugging
   # sheet <- sheet
-  # table_ref <- table_ref
+  # value_ref <- value_ref
   # formats <- formats
   # header_df <- header_df
 
   row_name_df <-
   sheet %>%
     filter(!is_blank,
-           row <= table_ref$max_row,
+           row <= value_ref$max_row,
            row > max(header_df$row_temp),
-           col < table_ref$min_col ) %>%
+           col < value_ref$min_col ) %>%
     mutate(col_temp = col ) %>%
     mutate(indent = local_format_id %>%
              map(~ formats$local$alignment[["indent"]][[.x]]) %>%
@@ -140,23 +142,29 @@ get_rowname_df <- function(sheet,table_ref,header_df,formats){
     group_by(col_temp,indent,bold,italic) %>% nest() %>% ungroup() %>%
     mutate(col_no_name =  col_temp - min(col_temp) + 1) %>%
     arrange(indent,italic,bold) %>%
-    mutate(stub_name = paste0("stub_",str_pad(row_number(),2,side = "left","0"))) %>%
+    mutate(row_group = paste0("row_group_",str_pad(row_number(),2,side = "left","0"))) %>%
     mutate(header_name = paste0("row_",
                                 str_pad(col_no_name,2,"left","0"),
                                 "_in",indent,
                                 "_b", as.integer(bold),
                                 "_it", as.integer(italic))) %>%
-    mutate(data=map2(data,stub_name,
-                     function(data,stub_name){
+    mutate(data=map2(data,row_group,
+                     function(data,row_group){
 
                        temp_df <- data %>% select(row,col,character)
-                       temp_df[[stub_name]] <- temp_df$character
+                       temp_df[[row_group]] <- temp_df$character
                        temp_df %>%  select(-character)}))
 
 
-  row_name_df %>%
-    mutate(row_sum = map_dbl(data,~get_row_sum(data = .x,sheet = sheet) )) %>%
-    mutate(direction = ifelse(row_sum == 0,"NNW","W"))
+row_name_df <-
+  row_name_df %>%  mutate(row_sum = map_dbl(data,~get_row_sum(data = .x,sheet = sheet) ))
+
+
+row_name_df %>% mutate(direction = ifelse(row_sum == 0,"NNW","W")) %>%
+  dplyr::select(col_group,direction,data,indent,bold,italic)
+
+
+
 }
 
 
@@ -171,11 +179,9 @@ get_row_sum <- function(data,sheet){
 
   data %>%
     mutate(row_sum_values = map_dbl(row,
-                                    function(x){summarise(filter(sheet,row == x ),filled = sum(numeric, na.rm = T))$filled})) %>%
+                                    function(x){summarise(filter(sheet,row == x ),filled = sum(!is_blank, na.rm = T))$filled})) %>%
     summarise(row_sum_values =  sum(row_sum_values, na.rm = T)) %>% pull(row_sum_values)
 }
-
-
 
 
 #' get metadata df
@@ -185,23 +191,23 @@ get_row_sum <- function(data,sheet){
 #'          2. groups them according to their indenting, bold and italic formatting
 #'          3. Specifies the unpivotr function specifying the direction of the header w.r.t. table data
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
-#' @param table_ref data frame representing corners of numeric cells in excel sheet
+#' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
 #' @param header_df format object read in by `tidyxl::xlsx_cells`
 
 
-get_meta_df <- function(sheet,table_ref,header_df,formats){
+get_meta_df <- function(sheet,value_ref,header_df,formats){
 
   ## Used for debugging
   # sheet <- master_df_01$sheet[[100]]
-  # table_ref <- master_df_01$table_ref[[100]]
+  # value_ref <- master_df_01$value_ref[[100]]
   # formats <- master_df_01$formats[[100]]
   # header_df <- master_df_01$header_df[[100]]
 
   sheet %>%
     filter(!is_blank,
            row <= min(header_df$row_temp),
-           col < table_ref$min_col ) %>%
+           col < value_ref$min_col ) %>%
     mutate(col_temp = col ) %>%
     mutate(row_temp = row ) %>%
     mutate(indent = local_format_id %>%
@@ -221,13 +227,15 @@ get_meta_df <- function(sheet,table_ref,header_df,formats){
                                 "_in",indent,
                                 "_b", as.integer(bold),
                                 "_it", as.integer(italic))) %>%
-    mutate(data=map2(data,header_name,
-                     function(data,header_name){
+    mutate(meta_data = paste0("meta_data_",str_pad(row_number(),2,side = "left","0"))) %>%
+    mutate(data=map2(data,meta_data,
+                     function(data,meta_data){
 
                        temp_df <- data %>% select(row,col,character)
-                       temp_df[[header_name]] <- temp_df$character
+                       temp_df[[meta_data]] <- temp_df$character
                        temp_df %>%  select(-character)})) %>%
-    mutate(direction = "WNW")
+    mutate(direction = "WNW") %>%
+    dplyr::select(meta_data,direction,data,indent,bold,italic)
 }
 
 
@@ -238,20 +246,18 @@ get_meta_df <- function(sheet,table_ref,header_df,formats){
 #'
 #' Extracts the numeric data from the table.
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
-#' @param table_ref data frame representing corners of numeric cells in excel sheet
+#' @param value_ref data frame representing corners of numeric cells in excel sheet
 
-get_tabledata <- function(sheet,table_ref){
-
-  # sheet <- master_df_01$sheet[[100]]
-  # table_ref <- master_df_01$table_ref[[100]]
+get_tabledata <- function(sheet,value_ref){
 
   sheet %>%
     filter(!is_blank,
-           row <= table_ref$max_row,
-           row >= table_ref$min_row,
-           col <= table_ref$max_col,
-           col >= table_ref$min_col ) %>%
-    select(row,col,numeric,comment)
+           row <= value_ref$max_row,
+           row >= value_ref$min_row,
+           col <= value_ref$max_col,
+           col >= value_ref$min_col ) %>%
+    mutate(value = coalesce(as.character(numeric),as.character(character),as.character(logical),as.character(date))) %>%
+    select(row,col,value,comment)
 }
 
 
@@ -270,7 +276,7 @@ create_tidytable <- function(header_df,rowname_df,meta_df,tabledata){
 
 
   tabledata <- tabledata %>% group_by(row,col,comment) %>% nest() %>%
-    mutate(numeric  = data %>% map_dbl(~ .x[[1,1]])) %>% select(-data)
+    mutate(value  = data %>% map_chr(~ .x[[1,1]])) %>% select(-data)
 
   map2(header_df$data,header_df$direction,
        function(header_data, direction){
@@ -306,12 +312,12 @@ get_tidy_table <- function(path,sheets ){
     fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks
 
 
-  table_ref <- sheet %>% get_table_references()
+  value_ref <- sheet %>% get_value_references()
 
-  header_df <- get_header_df(sheet = sheet,table_ref = table_ref,formats =formats  )
-  rowname_df <- get_rowname_df(sheet = sheet,table_ref = table_ref,formats =formats,header_df = header_df)
-  meta_df <- get_meta_df(sheet = sheet,table_ref = table_ref,formats =formats,header_df = header_df)
-  tabledata <- get_tabledata(sheet = sheet, table_ref = table_ref)
+  header_df <- get_header_df(sheet = sheet,value_ref = value_ref,formats =formats  )
+  rowname_df <- get_rowname_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
+  meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
+  tabledata <- get_tabledata(sheet = sheet, value_ref = value_ref)
 
 
   create_tidytable(header_df =header_df,meta_df = meta_df,rowname_df =rowname_df,tabledata =   tabledata)
@@ -344,12 +350,12 @@ get_tidyABS_components <- function(path,sheets ){
     fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks
 
 
-  table_ref <- sheet %>% get_table_references()
+  value_ref <- sheet %>% get_value_references()
 
-  header_df <- get_header_df(sheet = sheet,table_ref = table_ref,formats =formats  )
-  rowname_df <- get_rowname_df(sheet = sheet,table_ref = table_ref,formats =formats,header_df = header_df)
-  meta_df <- get_meta_df(sheet = sheet,table_ref = table_ref,formats =formats,header_df = header_df)
-  tabledata <- get_tabledata(sheet = sheet, table_ref = table_ref)
+  header_df <- get_header_df(sheet = sheet,value_ref = value_ref,formats =formats  )
+  rowname_df <- get_rowname_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
+  meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,header_df = header_df)
+  tabledata <- get_tabledata(sheet = sheet, value_ref = value_ref)
 
   list(header_df= header_df,rowname_df=rowname_df,meta_df=meta_df,tabledata=tabledata )
 
