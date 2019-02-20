@@ -67,7 +67,8 @@ example_datasets <-
     "C:/Users/Ian/Data/r-projects/temp/data/92080DO001_1231201610.xlsx","Table_6",
     "C:/Users/Ian/Data/r-projects/temp/data/4655006_2018.xlsx","Table 6.2",
     "C:/Users/Ian/Data/r-projects/temp/data/41250ds0010_201809.xlsx","Table 10.4",
-    "C:/Users/Ian/Data/r-projects/temp/data/81550do001_201617.xlsx","Table_1")
+    "C:/Users/Ian/Data/r-projects/temp/data/81550do001_201617.xlsx","Table_1",
+    "C:/Users/Ian/Data/r-projects/temp/data/Employee-earnings-and-hours.xlsx","Table_1")
 ```
 
 
@@ -76,6 +77,9 @@ example_datasets <-
 
 tidy_ABS_sheet(path = example_datasets$file_location[[1]],sheets = example_datasets$sheet[[1]])
   
+
+
+
 abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[1]],
                                          example_datasets$sheet[[1]])
 
@@ -100,33 +104,58 @@ get_table_references()
 
 
 
+sheet <- tidyxl::xlsx_cells(example_datasets$file_location[[3]],sheets = example_datasets$sheet[[3]])
+
+sheet %>% filter(row == 5) %>% fill_in_blanks %>% View
+
 get_tidy_table(path = example_datasets$file_location[[3]],sheets = example_datasets$sheet[[3]]) 
   
-abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[3]],
-                                         example_datasets$sheet[[3]])
+process_abs_sheet()
+
+abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[3]],
+                                         sheets = example_datasets$sheet[[3]],
+                                         manual_value_references =  c(2,15,11,34))
 
 abs_sheet_processed %>% inspect_table_components()  
-abs_sheet_processed %>% plot_table_components()
-  abs_sheet_processed %>% assemble_table_components()
+  abs_sheet_processed %>% plot_table_components()
+  abs_sheet_processed %>% assemble_table_components() %>% View
+  
+  abs_sheet_processed$row_groups %>% 
   
   abs_sheet_processed # Need a change direction function
-  abs_sheet_processed # Need to nominate table points 
+  abs_sheet_processed # Need to nominate table points
+  abs_sheet_processed # Need to recognise ALL caps vs title case
+  abs_sheet_processed # need to add custom groups
+  abs_sheet_processed # remove from coll is already a row (happens with merging)
   
 #----------------------------------------------------------------------
   
 get_tidy_table(path = example_datasets$file_location[[4]],sheets = example_datasets$sheet[[4]]) 
 
-abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[4]],
-                                         example_datasets$sheet[[4]])
+abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[4]],
+                                         example_datasets$sheet[[4]],manual_value_references =  c(2,8,8,234))
 
 abs_sheet_processed %>% plot_table_components()
 abs_sheet_processed %>% inspect_table_components()  
 abs_sheet_processed %>% assemble_table_components() %>% View
   
-abs_sheet_processed # Need a change direction function
-abs_sheet_processed # Need to nominate table points 
 
+ 
+
+#----------------------------------------------------------------------
   
+
+
+abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[5]],
+                                         example_datasets$sheet[[5]])
+
+abs_sheet_processed %>% plot_table_components()
+abs_sheet_processed %>% inspect_table_components()  
+abs_sheet_processed %>% assemble_table_components() %>% View
+  
+
+#-----------------------------------------------------
+
 shell('git config --global user.email "ian.moran11@gmail.com"')
 
 transport$rowname_df$direction[1] <- "NNW"

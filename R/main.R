@@ -39,15 +39,34 @@ fill_in_blanks <- function(sheet){
 #' Identify which cells are the numeric table cells by finding the corners
 #'
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
+#' @param manual_value_references sheet object read in by `tidyxl::xlsx_cells`
 
-get_value_references <- function(sheet){
 
 
-  sheet %>%
-    filter(!is.na(numeric)) %>%
-    summarise(
-      min_row = min(row), max_row = max(row),
-      min_col = min(col), max_col = max(col))
+get_value_references <- function(sheet, manual_value_references){
+
+  print("x")
+
+  if(is.null(manual_value_references)){
+    sheet %>%
+      filter(!is.na(numeric)) %>%
+      summarise(
+        min_row = min(row), max_row = max(row),
+        min_col = min(col), max_col = max(col))
+
+  }else{
+
+    data_frame(type = c("min_col", "max_col","min_row", "max_row"),
+               value =manual_value_references) %>%
+      spread(type,value)
+
+  }
+
+
+
+
+
+
 }
 
 
@@ -133,7 +152,7 @@ get_row_groups <- function(sheet,value_ref,col_groups,formats){
   sheet %>%
     filter(!is_blank,
            row <= value_ref$max_row,
-           row > max(col_groups$max_row),
+           row > min(col_groups$min_row),
            col < value_ref$min_col ) %>%
     mutate(col_temp = col ) %>%
     mutate(indent = local_format_id %>%
@@ -210,7 +229,7 @@ get_meta_df <- function(sheet,value_ref,col_groups,formats){
 
   sheet %>%
     filter(!is_blank,
-           row <= max(col_groups$max_row),
+           row <= min(col_groups$min_row),
            col < value_ref$min_col ) %>%
     mutate(col_temp = col ) %>%
     mutate(row_temp = row ) %>%
@@ -355,7 +374,7 @@ tidy_ABS_sheet <- function(path,sheets ){
 #'
 #' @export
 
-process_ABS_sheet <- function(path,sheets ){
+process_ABS_sheet <- function(path,sheets,manual_value_references = NULL){
 
   sheet <-  tidyxl::xlsx_cells(path = path,sheets = sheets)
   formats <-  tidyxl::xlsx_formats(path)
@@ -369,8 +388,8 @@ process_ABS_sheet <- function(path,sheets ){
     fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks %>%
     fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks
 
-
-  value_ref <- sheet %>% get_value_references()
+  manual_value_references_temp <- manual_value_references
+  value_ref <- sheet %>% get_value_references(manual_value_references =  manual_value_references_temp)
 
   col_groups <- get_col_groups(sheet = sheet,value_ref = value_ref,formats =formats  )
   row_groups <- get_row_groups(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
@@ -408,7 +427,7 @@ plot_table_components <- function(abs_sheet_processed){
 
   temp_01 %>%
     ggplot(aes(x = col, y = -row, fill = str_to_title(str_replace_all(type,"_"," ")),
-               label = paste0(ifelse(type!="data",paste0("(",direction,")"),"")))) +
+               label = paste(str_extract(type,"[0-9]{1,2}"),paste0(ifelse(type!="data",paste0("(",direction,")"),""))))) +
     geom_tile() +
     geom_text(size = 3) +
     xlim(limits = c(.5,10)) +
