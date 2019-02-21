@@ -4,10 +4,12 @@
 \alias{get_value_references}
 \title{Get table references}
 \usage{
-get_value_references(sheet)
+get_value_references(sheet, manual_value_references)
 }
 \arguments{
 \item{sheet}{sheet object read in by \code{tidyxl::xlsx_cells}}
+
+\item{manual_value_references}{sheet object read in by \code{tidyxl::xlsx_cells}}
 }
 \description{
 Identify which cells are the numeric table cells by finding the corners

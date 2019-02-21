@@ -4,6 +4,8 @@
 #' This function ensures that merged cells are unmerged.
 #'
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
+#'
+#' @export
 
 
 fill_in_blanks <- function(sheet){
@@ -40,10 +42,13 @@ fill_in_blanks <- function(sheet){
 #'
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param manual_value_references sheet object read in by `tidyxl::xlsx_cells`
+#'
+#' @export
 
 
 
 get_value_references <- function(sheet, manual_value_references){
+
 
   print("x")
 
@@ -56,18 +61,41 @@ get_value_references <- function(sheet, manual_value_references){
 
   }else{
 
-    data_frame(type = c("min_col", "max_col","min_row", "max_row"),
-               value =manual_value_references) %>%
-      spread(type,value)
 
-  }
+    cell_ref_df  <-
+    manual_value_references %>% map_df(cell_ref_2_df)
 
+    data_frame(
+      min_col = as.integer(min(cell_ref_df$column)) ,
+      max_col = as.integer(max(cell_ref_df$column)),
+      min_row = as.integer(min(cell_ref_df$row)) ,
+      max_row = as.integer(max(cell_ref_df$row)))
 
-
-
-
+    }
 
 }
+
+
+
+
+cell_ref_2_df <- function(cell_ref){
+
+  column_index <-
+    data_frame(LETTERS) %>%
+    mutate(LETTERS2 = rep(tibble(LETTERS),26)) %>%
+    unnest() %>% mutate(columns = paste0(LETTERS,LETTERS2)) %>%
+    pull(columns) %>% c(LETTERS,.)
+
+  which(str_extract(cell_ref,"[A-Z]{1,5}") ==column_index)-> column
+  str_extract(cell_ref,"[0-9]{1,5}") -> row
+
+  data_frame(column = column, row = row)
+
+}
+
+
+
+
 
 
 get_indent <- function(local_format_id, formats){
@@ -85,9 +113,13 @@ get_indent <- function(local_format_id, formats){
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
+#'
+#' @export
 
 
 get_col_groups <- function(sheet, value_ref,formats){
+
+
 
 
 col_df <-
@@ -123,7 +155,8 @@ col_df <-
     mutate(data_summary =data %>%
              map(~ .x %>% summarise(min_col = min(col,na.rm = T),max_col = max(col,na.rm = T),
                                     min_row = min(row,na.rm = T),max_row = max(row,na.rm = T)) )) %>%
-    unnest(data_summary)
+    unnest(data_summary) %>%
+    check_low_col_names
 
 }
 
@@ -138,9 +171,12 @@ col_df <-
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
 #' @param col_groups format object read in by `tidyxl::xlsx_cells`
+#' @param added_row_groups format object read in by `tidyxl::xlsx_cells`
+#'
+#' @export
 
 
-get_row_groups <- function(sheet,value_ref,col_groups,formats){
+get_row_groups <- function(sheet,value_ref,col_groups,formats,added_row_groups){
 
   ## Used for debugging
   # sheet <- sheet
@@ -152,7 +188,7 @@ get_row_groups <- function(sheet,value_ref,col_groups,formats){
   sheet %>%
     filter(!is_blank,
            row <= value_ref$max_row,
-           row > min(col_groups$min_row),
+           row >= min(col_groups$min_row),
            col < value_ref$min_col ) %>%
     mutate(col_temp = col ) %>%
     mutate(indent = local_format_id %>%
@@ -163,8 +199,17 @@ get_row_groups <- function(sheet,value_ref,col_groups,formats){
              unlist) %>%
     mutate(italic = local_format_id %>%
              map(~ formats$local$font[["italic"]][[.x]]) %>%
-             unlist) %>%
-    group_by(col_temp,indent,bold,italic) %>% nest() %>% ungroup() %>%
+             unlist)
+
+
+  added_row_df <-
+    tibble(address = added_row_groups) %>%
+    mutate(added_group_no = row_number()) %>% unnest()
+
+  row_name_df <-
+  row_name_df %>%
+    left_join(added_row_df) %>%
+    group_by(col_temp,indent,bold,italic,added_group_no ) %>% nest() %>% ungroup() %>%
     arrange(col_temp,indent,italic,bold) %>%
     mutate(row_group = paste0("row_group_",str_pad(row_number(),2,side = "left","0"))) %>%
     mutate(data=map2(data,row_group,
@@ -180,7 +225,7 @@ row_name_df <-
 
 
 row_name_df %>% mutate(direction = ifelse(row_sum == 0,"NNW","W")) %>%
-  dplyr::select(row_group,direction,data,indent,bold,italic) %>%
+  dplyr::select(row_group,direction,data,indent,bold,italic,added_group_no) %>%
   mutate(data_summary =data %>%
            map(~ .x %>% summarise(min_col = min(col,na.rm = T),max_col = max(col,na.rm = T),
                                   min_row = min(row,na.rm = T),max_row = max(row,na.rm = T)) )) %>%
@@ -197,6 +242,8 @@ row_name_df %>% mutate(direction = ifelse(row_sum == 0,"NNW","W")) %>%
 #' This function is used to identify whether rows have a Wester or NNW orientation to data
 #' @param x  a row_name_df object
 #' @param sheet  a row_name_df object
+#'
+#' @export
 
 get_row_sum <- function(data,sheet){
 
@@ -217,6 +264,8 @@ get_row_sum <- function(data,sheet){
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
 #' @param col_groups format object read in by `tidyxl::xlsx_cells`
+#'
+#' @export
 
 
 get_meta_df <- function(sheet,value_ref,col_groups,formats){
@@ -274,6 +323,9 @@ get_meta_df <- function(sheet,value_ref,col_groups,formats){
 #' Extracts the numeric data from the table.
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
+#'
+#' @export
+
 
 get_tabledata <- function(sheet,value_ref){
 
@@ -295,6 +347,8 @@ get_tabledata <- function(sheet,value_ref){
 #' @param row_groups
 #' @param meta_df
 #' @param tabledata
+#'
+#' @export
 
 
 create_tidytable <- function(col_groups,row_groups,meta_df,tabledata){
@@ -336,30 +390,14 @@ enhead_tabledata <-  function(header_data, direction,values = tabledata){
 #'
 #' @export
 
-tidy_ABS_sheet <- function(path,sheets ){
-
-  sheet <-  tidyxl::xlsx_cells(path = path,sheets = sheets)
-  formats <-  tidyxl::xlsx_formats(path)
+tidy_ABS_sheet <- function(path,sheets,manual_value_references = NULL ){
 
 
-  sheet <-
-  sheet %>%
-    fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks %>%
-    fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks %>%
-    fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks %>%
-    fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks %>%
-    fill_in_blanks %>% fill_in_blanks %>% fill_in_blanks
+  precessed_sheet <-  process_ABS_sheet(path,sheets,manual_value_references = NULL )
 
 
-  value_ref <- sheet %>% get_value_references()
+  assemble_table_components(precessed_sheet)
 
-  col_groups <- get_col_groups(sheet = sheet,value_ref = value_ref,formats =formats  )
-  row_groups <- get_row_groups(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
-  meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
-  tabledata <- get_tabledata(sheet = sheet, value_ref = value_ref)
-
-
-  create_tidytable(col_groups =col_groups,meta_df = meta_df,row_groups =row_groups,tabledata =   tabledata)
 
 }
 
@@ -374,7 +412,8 @@ tidy_ABS_sheet <- function(path,sheets ){
 #'
 #' @export
 
-process_ABS_sheet <- function(path,sheets,manual_value_references = NULL){
+process_ABS_sheet <-
+  function(path,sheets,manual_value_references = NULL, added_row_groups = NULL){
 
   sheet <-  tidyxl::xlsx_cells(path = path,sheets = sheets)
   formats <-  tidyxl::xlsx_formats(path)
@@ -391,8 +430,13 @@ process_ABS_sheet <- function(path,sheets,manual_value_references = NULL){
   manual_value_references_temp <- manual_value_references
   value_ref <- sheet %>% get_value_references(manual_value_references =  manual_value_references_temp)
 
+
+  added_row_groups_temp <- added_row_groups
   col_groups <- get_col_groups(sheet = sheet,value_ref = value_ref,formats =formats  )
-  row_groups <- get_row_groups(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
+  row_groups <- get_row_groups(sheet = sheet,value_ref = value_ref,
+                               formats =formats,col_groups = col_groups, added_row_groups = added_row_groups_temp)
+
+
   meta_df <- get_meta_df(sheet = sheet,value_ref = value_ref,formats =formats,col_groups = col_groups)
   tabledata <- get_tabledata(sheet = sheet, value_ref = value_ref)
 
@@ -425,13 +469,16 @@ plot_table_components <- function(abs_sheet_processed){
     select(type,direction,row,col,value) %>%
     bind_rows(abs_sheet_processed[[4]] %>% mutate(type = "data"))
 
+  # expression(symbol('\256'))
+
   temp_01 %>%
     ggplot(aes(x = col, y = -row, fill = str_to_title(str_replace_all(type,"_"," ")),
-               label = paste(str_extract(type,"[0-9]{1,2}"),paste0(ifelse(type!="data",paste0("(",direction,")"),""))))) +
+               label = ifelse(type!="data",paste(str_extract(type,"[0-9]{1,2}"),
+                                                 paste0(ifelse(type!="data",paste0("(",direction,")"),""))),""))) +
     geom_tile() +
     geom_text(size = 3) +
-    xlim(limits = c(.5,10)) +
-    ylim(limits = c(-30,-.5)) +
+    # xlim(limits = c(.5,10)) +
+    # ylim(limits = c(-30,-.5)) +
     theme_minimal() +
     labs(fill="Cell Type", y = "Row", x = "Column")
 }
@@ -467,5 +514,25 @@ assemble_table_components <- function(table_componsents){
 
   map2(col_groups$data,col_groups$direction, ~ enhead_tabledata(header_data= .x,direction = .y, values = tabledata)) %>%
     reduce(full_join)
+
+}
+
+
+
+#' check_low_col_names
+#'
+#' Checks whether merging of a row label is leading to dupplicates in col and row labels.
+#' @param table_componsents
+#'
+#' @export
+#'
+
+check_low_col_names <-  function(col_groups){
+
+
+    uniqueness_test <- col_groups$data  %>% map(3) %>% map_lgl(function(x) length(unique(x)) == 1 & length(x) > 1)
+
+    col_groups[!uniqueness_test,]
+
 
 }

@@ -6,6 +6,9 @@
 \usage{
 create_tidytable(col_groups, row_groups, meta_df, tabledata)
 }
+\arguments{
+\item{tabledata}{}
+}
 \description{
 Reshapes the data using unpivotr functions (which are specified in the head dataframes)
 }

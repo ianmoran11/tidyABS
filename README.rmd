@@ -91,8 +91,12 @@ abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[
   
 get_tidy_table(path = example_datasets$file_location[[2]],sheets = example_datasets$sheet[[2]]) 
   
-abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[2]],
-                                         example_datasets$sheet[[2]])
+  library(tidyABS)
+  
+  
+  tidyABS::process_ABS_sheet()
+abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[3]],
+                                         example_datasets$sheet[[3]])
 
   abs_sheet_processed %>% plot_table_components()
   abs_sheet_processed %>% assemble_table_components()
@@ -102,19 +106,30 @@ get_table_references()
 
 #------------------------------------------
 
-
+  
 
 sheet <- tidyxl::xlsx_cells(example_datasets$file_location[[3]],sheets = example_datasets$sheet[[3]])
 
 sheet %>% filter(row == 5) %>% fill_in_blanks %>% View
 
 get_tidy_table(path = example_datasets$file_location[[3]],sheets = example_datasets$sheet[[3]]) 
+
+table_corners <- c("B11","P11","B41","P41")
+
+
+added_row_groups1 = list(c("A9","A13"),c("A15"))
+
+tidyABS::process_ABS_sheet(
+  path = example_datasets$file_location[[3]],
+  sheets = example_datasets$sheet[[3]],
+  table_corners) %>%  plot_table_components
   
 process_abs_sheet()
 
 abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[3]],
                                          sheets = example_datasets$sheet[[3]],
-                                         manual_value_references =  c(2,15,11,34))
+                                         manual_value_references =  table_corners,
+                                         added_row_groups = added_row_groups1)
 
 abs_sheet_processed %>% inspect_table_components()  
   abs_sheet_processed %>% plot_table_components()
@@ -133,7 +148,9 @@ abs_sheet_processed %>% inspect_table_components()
 get_tidy_table(path = example_datasets$file_location[[4]],sheets = example_datasets$sheet[[4]]) 
 
 abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[4]],
-                                         example_datasets$sheet[[4]],manual_value_references =  c(2,8,8,234))
+                                         example_datasets$sheet[[4]])
+
+
 
 abs_sheet_processed %>% plot_table_components()
 abs_sheet_processed %>% inspect_table_components()  
@@ -144,15 +161,41 @@ abs_sheet_processed %>% assemble_table_components() %>% View
 
 #----------------------------------------------------------------------
   
+manual_value_references <- c("B11","O11","B34","O34")
+cell_corners <- c("B11","O11","B34","O34")
 
 
-abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[5]],
-                                         example_datasets$sheet[[5]])
+cell_ref_df <- cell_corners %>% map_df(cell_ref_2_df)
+
+
+
+    data_frame(
+      min_col = min(cell_ref_df$column) ,
+      max_col = max(cell_ref_df$column),
+      min_row =  min(cell_ref_df$row) ,
+      max_row = max(cell_ref_df$row))
+
+  
+
+
+
+abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[3]],
+                                         example_datasets$sheet[[3]],cell_corners)
+
+abs_sheet_processed <- 
+    process_ABS_sheet(path = example_datasets$file_location[[5]],
+                   sheets = "Table_4",manual_value_references = cell_corners)
+
+abs_sheet_processed %>% inspect_table_components()  
+
+abs_sheet_processed <- process_ABS_sheet(path = "C:/Users/Ian/Data/r-projects/temp/data/io-table-01.xlsx",
+                                         "Table 1")
+
+library(tidyABS)
 
 abs_sheet_processed %>% plot_table_components()
-abs_sheet_processed %>% inspect_table_components()  
-abs_sheet_processed %>% assemble_table_components() %>% View
-  
+  abs_sheet_processed %>% inspect_table_components()
+  abs_sheet_processed %>% assemble_table_components() 
 
 #-----------------------------------------------------
 
