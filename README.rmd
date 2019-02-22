@@ -64,11 +64,12 @@ library(tidyABS)
 example_datasets <- 
  tribble(
      ~file_location, ~sheet,
-    "C:/Users/Ian/Data/r-projects/temp/data/92080DO001_1231201610.xlsx","Table_6",
-    "C:/Users/Ian/Data/r-projects/temp/data/4655006_2018.xlsx","Table 6.2",
-    "C:/Users/Ian/Data/r-projects/temp/data/41250ds0010_201809.xlsx","Table 10.4",
-    "C:/Users/Ian/Data/r-projects/temp/data/81550do001_201617.xlsx","Table_1",
-    "C:/Users/Ian/Data/r-projects/temp/data/Employee-earnings-and-hours.xlsx","Table_1")
+      "examplesheets/46040do0001_2015_16.xlsx","Table 1.1", 
+      "examplesheets/5676001.xlsx", "Data1",
+      "examplesheets/640101.xlsx", "Data1",
+      "examplesheets/81550do001_201617.xlsx", "Table_1", 
+      "examplesheets/931401.xlsx", "Data1")
+
 ```
 
 
