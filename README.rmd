@@ -61,6 +61,8 @@ library(tidyABS)
 
 
 ```{r x05}
+
+
 example_datasets <- 
  tribble(
      ~file_location, ~sheet,
@@ -75,19 +77,19 @@ example_datasets <-
 
 ```{r x03}
 
+i <- 5
 
-tidy_ABS_sheet(path = example_datasets$file_location[[1]],sheets = example_datasets$sheet[[1]])
+abs_sheet_processed <- 
+  process_ABS_sheet(path = example_datasets$file_location[[i]],
+                    example_datasets$sheet[[i]]
+#                    ,manual_value_references = c("B11","V11","V143","B143")
+                    )
+
+abs_sheet_processed %>% tidyABS::inspect_table_components()
+abs_sheet_processed %>% plot_table_components() + ylim(c(-50,0))
+abs_sheet_processed %>% assemble_table_components() %>% View
   
 
-
-
-abs_sheet_processed <- process_abs_sheet(path = example_datasets$file_location[[1]],
-                                         example_datasets$sheet[[1]])
-
-  abs_sheet_processed %>% plot_table_components()
-  abs_sheet_processed %>% assemble_table_components()
-  
-  
 #-----------------------------------------
   
 get_tidy_table(path = example_datasets$file_location[[2]],sheets = example_datasets$sheet[[2]]) 
@@ -261,5 +263,20 @@ sheet <- tidyxl::xlsx_cells(example_datasets$file_location[[3]],example_datasets
 formats <- tidyxl::xlsx_formats(example_datasets$file_location[[3]])
 
 
+
+```
+
+
+
+
+```{r}
+
+dh <-   tidy_xlsx(path = example_datasets$file_location[[i]],
+                    example_datasets$sheet[[i]]
+#                    ,manual_value_references = c("B11","V11","V143","B143")
+                    )
+
+
+dh %>% glimpse
 ```
 

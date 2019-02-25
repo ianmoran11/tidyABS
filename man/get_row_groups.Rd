@@ -4,7 +4,7 @@
 \alias{get_row_groups}
 \title{Get Rowname DF}
 \usage{
-get_row_groups(sheet, value_ref, col_groups, formats)
+get_row_groups(sheet, value_ref, col_groups, formats, added_row_groups)
 }
 \arguments{
 \item{sheet}{sheet object read in by \code{tidyxl::xlsx_cells}}
@@ -14,6 +14,8 @@ get_row_groups(sheet, value_ref, col_groups, formats)
 \item{col_groups}{format object read in by \code{tidyxl::xlsx_cells}}
 
 \item{formats}{format object read in by \code{tidyxl::xlsx_cells}}
+
+\item{added_row_groups}{format object read in by \code{tidyxl::xlsx_cells}}
 }
 \description{
 This function:

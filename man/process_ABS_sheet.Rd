@@ -4,7 +4,8 @@
 \alias{process_ABS_sheet}
 \title{get tidyABS components}
 \usage{
-process_ABS_sheet(path, sheets, manual_value_references = NULL)
+process_ABS_sheet(path, sheets, manual_value_references = NULL,
+  added_row_groups = NULL)
 }
 \arguments{
 \item{path}{path to .xlsx file}
