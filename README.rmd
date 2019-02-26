@@ -1,5 +1,7 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -75,6 +77,70 @@ We can inspect what values have been allocated to which groups using the `inspec
 
 ```{r}
 inspect_table_components(eea_01_processed)
+
+```
+
+
+We can alph inspect classification of cells visually using 
+
+
+
+```{r}
+eea_01_plot <- plot_table_components(eea_01_processed)
+
+# Just look at the first rows 
+eea_01_plot + ylim(-20,-1)
+
+```
+
+Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
+
+```{r}
+assemble_table_components(eea_01_processed) 
+
+```
+
+With a little extra processing, we can plot this time series.
+
+```{r}
+assemble_table_components(eea_01_processed) %>% View
+  set_names(c("row", "col", "comment", "value", "year", "tax_01", 
+"total", "total")) %>% 
+  mutate(value = as.numeric(value)) %>% 
+  mutate(year =  as.numeric(str_extract(year,"[0-9]{4}")))
+
+```
+
+
+### Example 2: Australian Industry
+
+Here's an example proccess data from the Employee Earnings and Hours release. First retriev the path of our example file:
+
+```{r}
+
+tidyABS_example()
+
+ai_path <- tidyABS_example("australian-industry.xlsx")
+
+```
+
+We can now process Sheet 1 of that file using the function `process_ABS_sheet`
+
+
+```{r}
+
+ai_01_processed <- process_ABS_sheet(path = ai_path, sheets = "Table_1")
+
+
+```
+
+`mvu_01_processed` is a list of three dataframes. It stores the location and formation information of the cells that have been indentified as row names (`row_groups`) and column names (`col_groups`). It also contains the data values inside the data (`tabledata`).  
+
+We can inspect what values have been allocated to which groups using the `inspect_table_components`. Each group will be given its own column in the resulting tidy dataframe.
+
+
+```{r}
+inspect_table_components(ai_01_processed)
 
 ```
 
