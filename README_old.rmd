@@ -59,7 +59,7 @@ library(tidyABS)
 
 
 ```{r x05}
-tidyABS_example("41250ds0010_201809.xlsx")
+tidyABS_example()
 
 example_datasets <- 
  tribble(
