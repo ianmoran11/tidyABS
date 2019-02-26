@@ -46,10 +46,8 @@ To unmerge cells, press `ALT+F11`, click `This Workbook' in the left-hand pane a
 ```{r x02}
 library("devtools")
 library(roxygen2)
-
 document()
 devtools::install()
-
 library("tidyxl")
 library("tidyverse")
 library("unpivotr")
@@ -72,18 +70,34 @@ example_datasets <-
       "examplesheets/81550do001_201617.xlsx", "Table_1", 
       "examplesheets/931401.xlsx", "Data1")
 
+
+
+
+"examplesheets\41250ds0010_201809.xlsx",
+"examplesheets\63060.0.xlsx",
+"examplesheets\81550do001_201617.xlsx",
+"examplesheets\92080DO001_1231201610.xlsx"
+"examplesheets\640101.xlsx",
+"examplesheets\4655006_2018.xlsx",
+
+
+
+
+
+
 ```
 
 
 ```{r x03}
 
-i <- 5
+i <- 2
 
 abs_sheet_processed <- 
   process_ABS_sheet(path = example_datasets$file_location[[i]],
-                    example_datasets$sheet[[i]]
-#                    ,manual_value_references = c("B11","V11","V143","B143")
-                    )
+                    example_datasets$sheet[[i]],
+                    keep_meta_data = FALSE
+                    ,manual_value_references = c("B11","V11","V143","B143")
+                      )
 
 abs_sheet_processed %>% tidyABS::inspect_table_components()
 abs_sheet_processed %>% plot_table_components() + ylim(c(-50,0))

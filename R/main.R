@@ -239,7 +239,10 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
 
     row_name_df <-
       row_name_df %>%
-      left_join(added_row_df)
+      left_join(added_row_df)  %>%
+      mutate_at(.vars = vars(indent,bold,italic ),
+                .funs = funs(ifelse(is.na(added_group_no),.,NA)))
+
   } else {
     row_name_df <-
       row_name_df %>%
@@ -478,7 +481,7 @@ tidy_ABS_sheet <- function(path, sheets, manual_value_references = NULL) {
 #' @export
 
 process_ABS_sheet <-
-  function(path, sheets, manual_value_references = NULL, added_row_groups = NULL) {
+  function(path, sheets, manual_value_references = NULL, added_row_groups = NULL, keep_meta_data = FALSE) {
     sheet <- tidyxl::xlsx_cells(path = path, sheets = sheets)
     formats <- tidyxl::xlsx_formats(path)
 
@@ -539,9 +542,21 @@ process_ABS_sheet <-
 
     col_groups <- col_groups[cols_to_keep, ]
 
+    if(keep_meta_data == FALSE){
+
+      list(col_groups = col_groups, row_groups = row_groups, tabledata = tabledata)
+
+    }else{
+
+      list(col_groups = col_groups, row_groups = row_groups, meta_df = meta_df, tabledata = tabledata)
+
+    }
 
 
-    list(col_groups = col_groups, row_groups = row_groups, meta_df = meta_df, tabledata = tabledata)
+
+
+
+
   }
 
 
@@ -554,20 +569,45 @@ process_ABS_sheet <-
 
 
 plot_table_components <- function(abs_sheet_processed) {
-  temp <-
-    abs_sheet_processed %>%
-    .[1:3] %>%
-    map(~ .x %>% dplyr::select(type = 1, direction, data)) %>%
-    bind_rows() %>%
-    unnest()
 
-  value_cols <- names(temp)[str_detect(names(temp), "^col_|^row_|^meta_")]
+  if(length(abs_sheet_processed) == 4){
 
-  temp_01 <-
-    temp %>%
-    mutate(value = coalesce(!!!syms(value_cols))) %>%
-    select(type, direction, row, col, value) %>%
-    bind_rows(abs_sheet_processed[[4]] %>% mutate(type = "data"))
+    temp <-
+      abs_sheet_processed %>%
+      .[1:3] %>%
+      map(~ .x %>% dplyr::select(type = 1, direction, data)) %>%
+      bind_rows() %>%
+      unnest()
+
+    value_cols <- names(temp)[str_detect(names(temp), "^col_|^row_|^meta_")]
+
+    temp_01 <-
+      temp %>%
+      mutate(value = coalesce(!!!syms(value_cols))) %>%
+      select(type, direction, row, col, value) %>%
+      bind_rows(abs_sheet_processed[[4]] %>% mutate(type = "data"))
+
+  }else{
+
+
+    temp <-
+      abs_sheet_processed %>%
+      .[1:2] %>%
+      map(~ .x %>% dplyr::select(type = 1, direction, data)) %>%
+      bind_rows() %>%
+      unnest()
+
+    value_cols <- names(temp)[str_detect(names(temp), "^col_|^row_|^meta_")]
+
+    temp_01 <-
+      temp %>%
+      mutate(value = coalesce(!!!syms(value_cols))) %>%
+      select(type, direction, row, col, value) %>%
+      bind_rows(abs_sheet_processed[[3]] %>% mutate(type = "data"))
+
+
+  }
+
 
   # expression(symbol('\256'))
 
@@ -609,17 +649,40 @@ inspect_table_components <- function(abs_sheet_processed) {
 #' @export
 
 assemble_table_components <- function(table_componsents) {
-  bind_rows(table_componsents[1:3]) -> col_groups
+
+  if(length(table_componsents) == 4){
+
+    bind_rows(table_componsents[1:3]) -> col_groups
 
 
-  tabledata <- table_componsents[[4]] %>%
-    group_by(row, col, comment) %>%
-    nest() %>%
-    mutate(value = data %>% map_chr(~ .x[[1, 1]])) %>%
-    select(-data)
+    tabledata <- table_componsents[[4]] %>%
+      group_by(row, col, comment) %>%
+      nest() %>%
+      mutate(value = data %>% map_chr(~ .x[[1, 1]])) %>%
+      select(-data)
 
-  map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
-    reduce(full_join)
+    map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
+      reduce(full_join)
+
+  }else{
+
+
+    bind_rows(table_componsents[1:2]) -> col_groups
+
+
+    tabledata <- table_componsents[[3]] %>%
+      group_by(row, col, comment) %>%
+      nest() %>%
+      mutate(value = data %>% map_chr(~ .x[[1, 1]])) %>%
+      select(-data)
+
+    map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
+      reduce(full_join)
+
+
+  }
+
+
 }
 
 

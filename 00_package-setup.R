@@ -31,5 +31,7 @@ usethis::use_package("dplyr",type = "Imports")
 usethis::use_package("purrr",type = "Imports")
 usethis::use_package("stringi",type = "Imports")
 usethis::use_package("forcats",type = "Imports")
+usethis::use_package("tidyverse",type = "Imports")
+
 
 
