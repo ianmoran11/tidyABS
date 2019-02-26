@@ -1,296 +1,110 @@
 ---
-title: "README"
-output:
-  html_document: default
-  word_document: default
-editor_options:
-  chunk_output_type: console
+output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# TidyABS 
-
-TidyABS converts excel sheets relased by the Australian Bureau of Statistics into a tidy data format. 
-
-The typical workflow of this package requires 3 steps.  
-1. Convert .xls files to .xlsx  
-2. Unmerge cells (with this VBA code)  
-3. Use `tidyABS::get_tidy_table`  
-
-Below are a few examples.
-
-## Cause of death data
-
-The ABS annual releases cause of death data. Here's a snapshot of the first table of the Australian release:
-<!-- ![image]("data/ABS-COD-T1.png") -->
-
-This data is difficult to read into R for several reasons:
-1. The table is sourounded by metadata, with relevant values beginning in the 5th row. 
-2. Some information is represented by formatting. The heirarchy of row names is indicated by its boldness and indentation.
-3. Some information is reperensented in comments --- for exmample, whether figures are estimated with substantial standard error. 
-4. Some cells are merged. 
-
-This data can be downloaded from this [site](http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/3303.02017?OpenDocument).  
-
-Open the file and select save as .xlsx
-
-
-To unmerge cells, press `ALT+F11`, click `This Workbook' in the left-hand pane and copy the following [this text](http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/3303.02017?OpenDocument): 
-
-
-
-
-```{r x02}
-library("devtools")
-library(roxygen2)
-document()
-devtools::install()
-library("tidyxl")
-library("tidyverse")
-library("unpivotr")
-library("hrbrthemes")
-library("magrittr")
-library(tidyABS)
-
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
 ```
 
 
-```{r x05}
+## Overview
+
+The TidyABS package converts excel sheets released by the Australian Bureau of Statistics into a tidy data format.    
+
+Note: Files must be saved as .xlsx files. 
 
 
-example_datasets <- 
- tribble(
-     ~file_location, ~sheet,
-      "examplesheets/46040do0001_2015_16.xlsx","Table 1.1", 
-      "examplesheets/5676001.xlsx", "Data1",
-      "examplesheets/640101.xlsx", "Data1",
-      "examplesheets/81550do001_201617.xlsx", "Table_1", 
-      "examplesheets/931401.xlsx", "Data1")
+## Installation
 
-
-
-
-"examplesheets\41250ds0010_201809.xlsx",
-"examplesheets\63060.0.xlsx",
-"examplesheets\81550do001_201617.xlsx",
-"examplesheets\92080DO001_1231201610.xlsx"
-"examplesheets\640101.xlsx",
-"examplesheets\4655006_2018.xlsx",
-
-
-
-
-
-
-```
-
-
-```{r x03}
-
-i <- 2
-
-abs_sheet_processed <- 
-  process_ABS_sheet(path = example_datasets$file_location[[i]],
-                    example_datasets$sheet[[i]],
-                    keep_meta_data = FALSE
-                    ,manual_value_references = c("B11","V11","V143","B143")
-                      )
-
-abs_sheet_processed %>% tidyABS::inspect_table_components()
-abs_sheet_processed %>% plot_table_components() + ylim(c(-50,0))
-abs_sheet_processed %>% assemble_table_components() %>% View
-  
-
-#-----------------------------------------
-  
-get_tidy_table(path = example_datasets$file_location[[2]],sheets = example_datasets$sheet[[2]]) 
-  
-  library(tidyABS)
-  
-  
-  tidyABS::process_ABS_sheet()
-abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[3]],
-                                         example_datasets$sheet[[3]])
-
-  abs_sheet_processed %>% plot_table_components()
-  abs_sheet_processed %>% assemble_table_components()
-
-col_groups
-get_table_references()
-
-#------------------------------------------
-
-  
-
-sheet <- tidyxl::xlsx_cells(example_datasets$file_location[[3]],sheets = example_datasets$sheet[[3]])
-
-sheet %>% filter(row == 5) %>% fill_in_blanks %>% View
-
-get_tidy_table(path = example_datasets$file_location[[3]],sheets = example_datasets$sheet[[3]]) 
-
-table_corners <- c("B11","P11","B41","P41")
-
-
-added_row_groups1 = list(c("A9","A13"),c("A15"))
-
-tidyABS::process_ABS_sheet(
-  path = example_datasets$file_location[[3]],
-  sheets = example_datasets$sheet[[3]],
-  table_corners) %>%  plot_table_components
-  
-process_abs_sheet()
-
-abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[3]],
-                                         sheets = example_datasets$sheet[[3]],
-                                         manual_value_references =  table_corners,
-                                         added_row_groups = added_row_groups1)
-
-abs_sheet_processed %>% inspect_table_components()  
-  abs_sheet_processed %>% plot_table_components()
-  abs_sheet_processed %>% assemble_table_components() %>% View
-  
-  abs_sheet_processed$row_groups %>% 
-  
-  abs_sheet_processed # Need a change direction function
-  abs_sheet_processed # Need to nominate table points
-  abs_sheet_processed # Need to recognise ALL caps vs title case
-  abs_sheet_processed # need to add custom groups
-  abs_sheet_processed # remove from coll is already a row (happens with merging)
-  
-#----------------------------------------------------------------------
-  
-get_tidy_table(path = example_datasets$file_location[[4]],sheets = example_datasets$sheet[[4]]) 
-
-abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[4]],
-                                         example_datasets$sheet[[4]])
-
-
-
-abs_sheet_processed %>% plot_table_components()
-abs_sheet_processed %>% inspect_table_components()  
-abs_sheet_processed %>% assemble_table_components() %>% View
-  
-
+TidyABS is not available on CRAN. The package can be installed from github with the following script:
  
+```{r eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("ianmoran11/tidyABS")
+```
 
-#----------------------------------------------------------------------
-  
-manual_value_references <- c("B11","O11","B34","O34")
-cell_corners <- c("B11","O11","B34","O34")
+## Usage
 
+```{r include = FALSE}
+options(tibble.print_min = 3, tibble.print_max = 3)
+```
 
-cell_ref_df <- cell_corners %>% map_df(cell_ref_2_df)
-
-
-
-    data_frame(
-      min_col = min(cell_ref_df$column) ,
-      max_col = max(cell_ref_df$column),
-      min_row =  min(cell_ref_df$row) ,
-      max_row = max(cell_ref_df$row))
-
-  
-
-
-
-abs_sheet_processed <- process_ABS_sheet(path = example_datasets$file_location[[3]],
-                                         example_datasets$sheet[[3]],cell_corners)
-
-abs_sheet_processed <- 
-    process_ABS_sheet(path = example_datasets$file_location[[5]],
-                   sheets = "Table_4",manual_value_references = cell_corners)
-
-abs_sheet_processed %>% inspect_table_components()  
-
-abs_sheet_processed <- process_ABS_sheet(path = "C:/Users/Ian/Data/r-projects/temp/data/io-table-01.xlsx",
-                                         "Table 1")
-
+```{r}
 library(tidyABS)
-
-abs_sheet_processed %>% plot_table_components()
-  abs_sheet_processed %>% inspect_table_components()
-  abs_sheet_processed %>% assemble_table_components() 
-
-#-----------------------------------------------------
-
-shell('git config --global user.email "ian.moran11@gmail.com"')
-
-transport$rowname_df$direction[1] <- "NNW"
-
-transport_df <- 
-  create_tidytable(header_df = transport$header_df,
-                   rowname_df = transport$rowname_df,
-                   meta_df = transport$meta_df, 
-                   tabledata = transport$tabledata ) 
-
-buses_df <- 
-  transport_df %>% 
-  set_names(c("row", "col", "comment", "value", "measure", "unit", "state","vehicle", "total", 
-              "abs", "file_no", "release_time", "table_num")) %>% 
-  filter(str_detect(unit,"l"),is.na(total),vehicle == "Buses",measure == "Petrol") %>% 
-  mutate(state = fct_reorder(state, value )) 
-
-buses_df %>% 
-  ggplot(aes(y = value, x = measure, fill = state)) + geom_col(position = "dodge") + 
-  coord_flip() + hrbrthemes::theme_ipsum() 
-  
-
-
 ```
 
+tidyABS includes several example files.  Use the helper `tidyABS_example()` with no arguments to list them or call it with an example filename to get the path.
 
 ```{r}
-tax_df  <- get_tidy_table(path = example_datasets$file_location[[2]],example_datasets$sheet[[2]])
 
-tax_df %>% 
-  set_names(c("row", "col", "comment", "value", "ABS", 
-              "file", "release_time", "table_name", "year",
-              "industry", "total", "Australia")) %>% 
-  mutate(year = str_extract(year,"[0-9]{4}") %>% as.integer) %>% 
-  filter(is.na(total),industry != "All industries") -> 
-  tax_plot_df 
-  
-tax_plot_df  %>% 
-  ggplot(aes(x = year, y = value, color = industry)) + geom_line()
-  
-  
-tax_plot_df %>% group_by(industry) %>% 
-  mutate(first_year_value = sum(ifelse(year == 2003,value, NA ),na.rm = TRUE)) %>% 
-  mutate(value = value/first_year_value) %>% 
-  ggplot(aes(x = year, y = value, color = industry)) + geom_line()
-  
-  
-```
-
-
-
-## Including Plots
-
-```{r x01}
-
-get_tidy_table(path = example_datasets$file_location[[3]],example_datasets$sheet[[3]]) %>% View
-
-sheet <- tidyxl::xlsx_cells(example_datasets$file_location[[3]],example_datasets$sheet[[3]])
-formats <- tidyxl::xlsx_formats(example_datasets$file_location[[3]])
-
-
+tidyABS_example()
 
 ```
 
+### Example 1: Environmental-Economic Accounts
 
+Here's an example proccess data from the Employee Earnings and Hours release. First retriev the path of our example file:
+
+```{r}
+
+eea_path <- tidyABS_example("environmental-economic-accounts.xlsx")
+
+```
+
+We can now process Sheet 1 of that file using the function `process_ABS_sheet`
 
 
 ```{r}
 
-dh <-   tidy_xlsx(path = example_datasets$file_location[[i]],
-                    example_datasets$sheet[[i]]
-#                    ,manual_value_references = c("B11","V11","V143","B143")
-                    )
+eea_01_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
 
+print(eea_01_processed)
 
-dh %>% glimpse
 ```
 
+`mvu_01_processed` is a list of three dataframes. It stores the location and formation information of the cells that have been indentified as row names (`row_groups`) and column names (`col_groups`). It also contains the data values inside the data (`tabledata`).  
+
+We can inspect what values have been allocated to which groups using the `inspect_table_components`. Each group will be given its own column in the resulting tidy dataframe.
+
+
+```{r}
+inspect_table_components(eea_01_processed)
+
+```
+
+
+We can alph inspect classification of cells visually using 
+
+
+
+```{r}
+eea_01_plot <- plot_table_components(eea_01_processed)
+
+# Just look at the first rows 
+eea_01_plot + ylim(-20,-1)
+
+```
+
+Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
+
+```{r}
+assemble_table_components(eea_01_processed) 
+
+```
+
+With a little extra processing, we can plot this time series.
+
+```{r}
+assemble_table_components(eea_01_processed) %>% View
+  set_names(c("row", "col", "comment", "value", "year", "tax_01", 
+"total", "total")) %>% 
+  mutate(value = as.numeric(value)) %>% 
+  mutate(year =  as.numeric(str_extract(year,"[0-9]{4}")))
+
+```

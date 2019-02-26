@@ -7,9 +7,9 @@
 get_row_sum(data, sheet)
 }
 \arguments{
-\item{sheet}{a row_name_df object}
+\item{data}{a row_name_df object}
 
-\item{x}{a row_name_df object}
+\item{sheet}{a row_name_df object}
 }
 \description{
 This function is used to identify whether rows have a Wester or NNW orientation to data

@@ -12,5 +12,5 @@ get_value_references(sheet, manual_value_references)
 \item{manual_value_references}{sheet object read in by \code{tidyxl::xlsx_cells}}
 }
 \description{
-Identify which cells are the numeric table cells by finding the corners
+Identifies rectangle of numeric cells in table.
 }
