@@ -9,7 +9,7 @@
 
 
 fill_in_blanks <- function(sheet) {
-
+  1
   # Define blank cells
   blank_df <-
     sheet %>%
@@ -30,5 +30,21 @@ fill_in_blanks <- function(sheet) {
     mutate(col = col_old) %>%
     select(-col_old) %>%
     filter(!is_blank) %>%
-    mutate(row_col = paste0(row, "_", col))
-  }
+    mutate(row_col = paste0(row, "_", col))  %>%     mutate(merged = 1 )
+
+
+
+  # Join sheet with inserter
+  sheet <-
+    sheet %>%
+    mutate(row_col = paste0(row, "_", col)) %>%
+    filter(!row_col %in% inserter$row_col) %>%
+    bind_rows(inserter) %>%
+    arrange(row, col)
+
+  # Remove duplicates
+  sheet %>% group_by(row, col) %>% top_n(n = 1,wt = row_number()) %>% ungroup()
+
+}
+
+

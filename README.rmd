@@ -128,9 +128,11 @@ We can now process Sheet 1 of that file using the function `process_ABS_sheet`
 
 
 ```{r}
+devtools::install() ;8
 
-ai_01_processed <- process_ABS_sheet(path = ai_path, sheets = "Table_1")
+ai_01_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
 
+ai_01_processed %>% str(2)
 
 ```
 
@@ -150,17 +152,17 @@ We can alph inspect classification of cells visually using
 
 
 ```{r}
-eea_01_plot <- plot_table_components(eea_01_processed)
+eea_01_plot <- plot_table_components(ai_01_processed)
 
 # Just look at the first rows 
-eea_01_plot + ylim(-20,-1)
+
 
 ```
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
 ```{r}
-assemble_table_components(eea_01_processed) 
+assemble_table_components(ai_01_processed)   %>% View
 
 ```
 

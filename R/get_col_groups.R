@@ -12,6 +12,12 @@
 
 
 get_col_groups <- function(sheet, value_ref, formats) {
+
+
+
+  print("x")
+
+
   col_df <-
     sheet %>%
     filter(!is_blank) %>%
@@ -20,17 +26,19 @@ get_col_groups <- function(sheet, value_ref, formats) {
     filter(row < value_ref$min_row) %>%
     mutate(row_temp = row) %>%
     mutate(indent = local_format_id %>%
-             map_dbl(possibly({
-               ~ formats$local$alignment[["indent"]][[.x]]
-             }, 0)) %>%
+             map_int(possibly({
+               ~ formats$local$alignment[["indent"]][[.x]]              }, 0)) %>%
              unlist()) %>%
     mutate(bold = local_format_id %>%
-             map(~ formats$local$font[["bold"]][[.x]]) %>%
+             map_lgl(possibly({
+               ~ formats$local$font[["bold"]][[.x]]},F)) %>%
              unlist()) %>%
     mutate(italic = local_format_id %>%
-             map(~ formats$local$font[["italic"]][[.x]]) %>%
+             map_lgl(possibly({~ formats$local$font[["italic"]][[.x]]},F)) %>%
              unlist()) %>%
     group_by(row_temp, indent, bold, italic) %>%
+    mutate(merged = ifelse(sum(merged,na.rm = TRUE ) == length(merged),T,F)) %>%
+    filter(merged != T ) %>%
     nest() %>%
     ungroup() %>%
     mutate(row_no_name = row_temp - min(row_temp) + 1) %>%
@@ -52,6 +60,7 @@ get_col_groups <- function(sheet, value_ref, formats) {
     )) %>%
     mutate(direction = "N") %>%
     dplyr::select(col_group, direction, data, indent, bold, italic)
+
 
   col_df %>%
     mutate(data_summary = data %>%
