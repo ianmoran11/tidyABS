@@ -60,10 +60,7 @@ tidyABS includes several example files. Use the helper
 tidyABS_example()
 #> [1] "australian-industry.xlsx"            
 #> [2] "consumer-price-index.xlsx"           
-#> [3] "employee-earnings-and-hours.xlsx"    
-#> [4] "environmental-economic-accounts.xlsx"
-#> [5] "motor-vehicle-use.xlsx"              
-#> [6] "time-use_gender-indicators.xlsx"
+#> [3] "environmental-economic-accounts.xlsx"
 ```
 
 Here’s the first sheet of an excel workbook from the Australian Industry
