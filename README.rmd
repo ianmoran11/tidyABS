@@ -37,14 +37,14 @@ devtools::install_github("ianmoran11/tidyABS")
 options(tibble.print_min = 3, tibble.print_max = 3)
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyABS)
 library(tidyverse)
 ```
 
 tidyABS includes several example files.  Use the helper `tidyABS_example()` with no arguments to list them or call it with an example filename to get the path.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 tidyABS_example()
 ```
 
@@ -53,16 +53,16 @@ tidyABS_example()
 
 Here's an excel workbook from the Australian release. We can get its path by using the `tidyABS_example` with the the filename as an argument:
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 ai_path <- tidyABS_example("australian-industry.xlsx")
 ```
 
 We can now process the first sheet, "Table_1", of the file using the function `process_ABS_sheet`
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 ai_01_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
 
-ai_01_processed %>% str(2)
+ai_01_processed %>% str(1)
 ```
 
 `mvu_01_processed` is a list of three dataframes. It stores the location and format information of the cells that have been indentified as row names (`row_groups`) and column names (`col_groups`). It also contains the inner cell values of the table (`tabledata`).  
@@ -70,7 +70,7 @@ ai_01_processed %>% str(2)
 We can inspect `mvu_01_processed` to see what values have been allocated to which groups using the `inspect_table_components` function.
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 inspect_table_components(ai_01_processed)
 ```
 
@@ -85,14 +85,14 @@ Each of the groups listed will be given its own column in the resulting tidy dat
 
 We can also  can visually inspect how these groups are spatially layed out in the spreadsheet any how tidyABS will relate them to table values with `plot_table_components`.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 plot_table_components(ai_01_processed) + ylim(-50,0)
 ```
 
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 assemble_table_components(ai_01_processed)
 ```
 
@@ -104,26 +104,26 @@ Unfortunately it is not always easy.
 
 Here's an example proccess data from the Environmental Economic Accounts. First, lets retrieve the path of our example file:
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 eea_path <- tidyABS_example("environmental-economic-accounts.xlsx")
 ```
 
 Then sheet 1 ("Table 6.1") of that file using the function `process_ABS_sheet`
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 eea_01_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
 ```
 
 On visual inspection, We can see some `row_group_01` has been given a "W" orientation to the data, not "WNW". 
 
-```{r}
+```{r fig.height=10, fig.width=20, message=FALSE, warning=FALSE}
 plot_table_components(eea_01_processed)
 ```
 
 
 Luckily, we can fix this with the `change_direction` function. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 eea_01_processed <- 
   eea_01_processed %>% 
   change_direction("row_group_01","WNW")
@@ -131,13 +131,13 @@ eea_01_processed <-
 
 Plotting the table shows that it as been corrected. 
 
-```{r}
+```{r fig.height=10, fig.width=20, message=FALSE, warning=FALSE}
 plot_table_components(eea_01_processed)
 ```
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 assemble_table_components(eea_01_processed)  
 ```
 
@@ -150,13 +150,13 @@ I recommend using the [`readABS`](https://github.com/MattCowgill/readabs) packag
 
 That said, here's how you would do this with `tidyABS`.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 cpi_path <- tidyABS_example("consumer-price-index.xlsx")
 ```
 
 We need to identify the inner table cells using the `manual_value_references` argument to `process_ABS_sheet`.This arguments takes a vectors addresses, identifying the inner corners of the table. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 cpi_processed <- 
   process_ABS_sheet(path = cpi_path, sheets = "Data1",
                     manual_value_references = c("B11","AB11","B292","AB292"))
@@ -164,7 +164,7 @@ cpi_processed <-
 
 And here is the resulting data frame. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 inspect_table_components(cpi_processed)
 
 assemble_table_components(cpi_processed) 

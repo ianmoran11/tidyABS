@@ -25,22 +25,6 @@ devtools::install_github("ianmoran11/tidyABS")
 ``` r
 library(tidyABS)
 library(tidyverse)
-#> Warning: package 'tidyverse' was built under R version 3.4.4
-#> -- Attaching packages -------------------------------------------------------------------------------------------- tidyverse 1.2.1 --
-#> v ggplot2 3.1.0     v purrr   0.2.5
-#> v tibble  2.0.1     v dplyr   0.7.8
-#> v tidyr   0.8.2     v stringr 1.3.1
-#> v readr   1.3.1     v forcats 0.3.0
-#> Warning: package 'ggplot2' was built under R version 3.4.4
-#> Warning: package 'tibble' was built under R version 3.4.4
-#> Warning: package 'tidyr' was built under R version 3.4.4
-#> Warning: package 'purrr' was built under R version 3.4.4
-#> Warning: package 'dplyr' was built under R version 3.4.4
-#> Warning: package 'stringr' was built under R version 3.4.4
-#> Warning: package 'forcats' was built under R version 3.4.4
-#> -- Conflicts ----------------------------------------------------------------------------------------------- tidyverse_conflicts() --
-#> x dplyr::filter() masks stats::filter()
-#> x dplyr::lag()    masks stats::lag()
 ```
 
 tidyABS includes several example files. Use the helper
@@ -74,49 +58,12 @@ function
 
 ``` r
 ai_01_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
-#> Warning: package 'bindrcpp' was built under R version 3.4.4
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = "values"
 
-ai_01_processed %>% str(2)
+ai_01_processed %>% str(1)
 #> List of 3
 #>  $ col_groups:Classes 'tbl_df', 'tbl' and 'data.frame':  2 obs. of  10 variables:
-#>   ..$ col_group: chr [1:2] "col_group_01" "col_group_02"
-#>   ..$ direction: chr [1:2] "N" "N"
-#>   ..$ data     :List of 2
-#>   ..$ indent   : int [1:2] 0 0
-#>   ..$ bold     : logi [1:2] TRUE FALSE
-#>   ..$ italic   : logi [1:2] FALSE FALSE
-#>   ..$ min_col  : int [1:2] 2 2
-#>   ..$ max_col  : int [1:2] 9 9
-#>   ..$ min_row  : int [1:2] 5 6
-#>   ..$ max_row  : int [1:2] 5 6
 #>  $ row_groups:Classes 'tbl_df', 'tbl' and 'data.frame':  2 obs. of  11 variables:
-#>   ..$ row_group     : chr [1:2] "row_group_01" "row_group_02"
-#>   ..$ direction     : chr [1:2] "W" "NNW"
-#>   ..$ data          :List of 2
-#>   ..$ indent        : int [1:2] 0 0
-#>   ..$ bold          : logi [1:2] FALSE TRUE
-#>   ..$ italic        : logi [1:2] FALSE FALSE
-#>   ..$ added_group_no: logi [1:2] NA NA
-#>   ..$ min_col       : int [1:2] 1 1
-#>   ..$ max_col       : int [1:2] 1 1
-#>   ..$ min_row       : int [1:2] 8 7
-#>   ..$ max_row       : int [1:2] 234 223
 #>  $ tabledata :Classes 'tbl_df', 'tbl' and 'data.frame':  1816 obs. of  4 variables:
-#>   ..$ row    : int [1:1816] 8 8 8 8 8 8 8 8 9 9 ...
-#>   ..$ col    : int [1:1816] 2 3 4 5 6 7 8 9 2 3 ...
-#>   ..$ value  : chr [1:1816] "485" "5843" "54410" "57577" ...
-#>   ..$ comment: chr [1:1816] NA NA NA NA ...
 ```
 
 `mvu_01_processed` is a list of three dataframes. It stores the location
@@ -129,7 +76,6 @@ to which groups using the `inspect_table_components` function.
 
 ``` r
 inspect_table_components(ai_01_processed)
-#> Warning: Unknown or uninitialised column: 'data'.
 #> $col_groups
 #> $col_groups[[1]]
 #> [1] "Employment at end of June"                                 
@@ -192,8 +138,6 @@ with `plot_table_components`.
 
 ``` r
 plot_table_components(ai_01_processed) + ylim(-50,0)
-#> Warning: Removed 1656 rows containing missing values (geom_tile).
-#> Warning: Removed 1656 rows containing missing values (geom_text).
 ```
 
 ![](README-unnamed-chunk-9-1.png)<!-- -->
@@ -203,9 +147,6 @@ Finally, we can assembly the components into a tidy dataframe using
 
 ``` r
 assemble_table_components(ai_01_processed)
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
 #> # A tibble: 1,816 x 8
 #>     row   col comment value col_group_01 col_group_02 row_group_01
 #>   <int> <int> <chr>   <chr> <chr>        <chr>        <chr>       
@@ -234,13 +175,6 @@ Then sheet 1 (“Table 6.1”) of that file using the function
 
 ``` r
 eea_01_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = "values"
 ```
 
 On visual inspection, We can see some `row_group_01` has been given a
@@ -273,9 +207,6 @@ Finally, we can assembly the components into a tidy dataframe using
 
 ``` r
 assemble_table_components(eea_01_processed)  
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
 #> # A tibble: 156 x 8
 #>     row   col comment value col_group_01 row_group_01 row_group_02
 #>   <int> <int> <chr>   <chr> <chr>        <chr>        <chr>       
@@ -310,16 +241,12 @@ takes a vectors addresses, identifying the inner corners of the table.
 cpi_processed <- 
   process_ABS_sheet(path = cpi_path, sheets = "Data1",
                     manual_value_references = c("B11","AB11","B292","AB292"))
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = c("sheet", "row", "col", "local_format_id")
-#> Joining, by = "values"
 ```
 
 And here is the resulting data frame.
 
 ``` r
 inspect_table_components(cpi_processed)
-#> Warning: Unknown or uninitialised column: 'data'.
 #> $col_groups
 #> $col_groups[[1]]
 #>  [1] "Index Numbers ;  All groups CPI ;  Sydney ;"                                                   
@@ -449,16 +376,6 @@ inspect_table_components(cpi_processed)
 #> list()
 
 assemble_table_components(cpi_processed) 
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
-#> Joining, by = c("row", "col", "comment", "value")
 #> # A tibble: 7,185 x 15
 #>     row   col comment value col_group_01 col_group_02 col_group_03
 #>   <int> <int> <chr>   <chr> <chr>        <chr>        <chr>       
