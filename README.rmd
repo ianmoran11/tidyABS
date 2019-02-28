@@ -40,13 +40,26 @@ library(tidyABS)
 library(tidyverse)
 ```
 
+
+Below is a quick demonstration that tidies an Australian Industry sheet. 
+
+```{r message=FALSE, warning=FALSE}
+tidyABS_example("australian-industry.xlsx") %>% 
+  process_ABS_sheet(sheets = "Table_1") %>% 
+  assemble_table_components()  %>% 
+  glimpse
+  
+```
+
+More functionality of the tidyABS is presented below.
+
+### Example 1: Australian Industry
+
 tidyABS includes several example files. Use the helper `tidyABS_example()` with no arguments to list these files:
 
 ```{r message=FALSE, warning=FALSE}
 tidyABS_example()
 ```
-
-### Example 1: Australian Industry
 
 Here's an excel workbook from the Australian  Industry publication. We retrieve the path of this file  using the `tidyABS_example` function with our filename as the argument:
 

@@ -28,6 +28,29 @@ library(tidyABS)
 library(tidyverse)
 ```
 
+Below is a quick demonstration that tidies an Australian Industry sheet.
+
+``` r
+tidyABS_example("australian-industry.xlsx") %>% 
+  process_ABS_sheet(sheets = "Table_1") %>% 
+  assemble_table_components()  %>% 
+  glimpse
+#> Observations: 1,816
+#> Variables: 8
+#> $ row          <int> 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 1...
+#> $ col          <int> 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5, 6, 7, 8, 9, 2...
+#> $ comment      <chr> NA, NA, NA, NA, NA, "estimate has a relative stan...
+#> $ value        <chr> "485", "5843", "54410", "57577", "52046", "5461",...
+#> $ col_group_01 <chr> "Employment at end of June", "Wages and salaries"...
+#> $ col_group_02 <chr> "'000", "$m", "$m", "$m", "$m", "$m", "$m", "$m",...
+#> $ row_group_01 <chr> "2006–07", "2006–07", "2006–07", "2006–07", "2006...
+#> $ row_group_02 <chr> "AGRICULTURE, FORESTRY AND FISHING", "AGRICULTURE...
+```
+
+More functionality of the tidyABS is presented below.
+
+### Example 1: Australian Industry
+
 tidyABS includes several example files. Use the helper
 `tidyABS_example()` with no arguments to list these files:
 
@@ -40,8 +63,6 @@ tidyABS_example()
 #> [5] "motor-vehicle-use.xlsx"              
 #> [6] "time-use_gender-indicators.xlsx"
 ```
-
-### Example 1: Australian Industry
 
 Here’s an excel workbook from the Australian Industry publication. We
 retrieve the path of this file using the `tidyABS_example` function with
@@ -129,7 +150,7 @@ plot_table_components(ai_processed) +
   ylim(-30,0) 
 ```
 
-![](README-unnamed-chunk-9-1.png)<!-- -->
+![](README-unnamed-chunk-10-1.png)<!-- -->
 
 Finally, we can assembly the components into a tidy dataframe using
 `assemble_table_components`.
@@ -171,7 +192,7 @@ orientation to the data, not “WNW”.
 plot_table_components(eea_processed)
 ```
 
-![](README-unnamed-chunk-12-1.png)<!-- -->
+![](README-unnamed-chunk-13-1.png)<!-- -->
 
 Luckily, we can fix this with the `change_direction` function.
 
@@ -187,7 +208,7 @@ Plotting the table confirms the direction has been corrected.
 plot_table_components(eea_processed)
 ```
 
-![](README-unnamed-chunk-14-1.png)<!-- -->
+![](README-unnamed-chunk-15-1.png)<!-- -->
 
 Finally, we can assembly the components into a tidy dataframe using
 `assemble_table_components`.
