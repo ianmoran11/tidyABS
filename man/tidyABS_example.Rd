@@ -21,5 +21,4 @@ This function has been copied from the readxl package.
 \examples{
 readxl_example()
 readxl_example("datasets.xlsx")
-
 }

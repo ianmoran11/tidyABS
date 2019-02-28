@@ -51,6 +51,8 @@ More functionality of the tidyABS is presented below.
 
 ### Example 1: Australian Industry
 
+![](README-unnamed-chunk-6-1.png)<!-- -->
+
 tidyABS includes several example files. Use the helper
 `tidyABS_example()` with no arguments to list these files:
 
@@ -64,9 +66,9 @@ tidyABS_example()
 #> [6] "time-use_gender-indicators.xlsx"
 ```
 
-Here’s an excel workbook from the Australian Industry publication. We
-retrieve the path of this file using the `tidyABS_example` function with
-our filename as the argument:
+Here’s the first sheet of an excel workbook from the Australian Industry
+publication. We can retrieve the path of this file using the
+`tidyABS_example` function with our filename as the argument:
 
 ``` r
 ai_path <- tidyABS_example("australian-industry.xlsx")
@@ -150,7 +152,7 @@ plot_table_components(ai_processed) +
   ylim(-30,0) 
 ```
 
-![](README-unnamed-chunk-10-1.png)<!-- -->
+![](README-unnamed-chunk-11-1.png)<!-- -->
 
 Finally, we can assembly the components into a tidy dataframe using
 `assemble_table_components`.
@@ -175,6 +177,8 @@ appropriate data types.
 
 ### Example 2: Environmental-Economic Accounts
 
+![](README-unnamed-chunk-13-1.png)<!-- -->
+
 Here’s an example that requires some manual work, the Environmental
 Economic Accounts. Let’s retrieve the path of our example file and
 proces it:
@@ -192,7 +196,7 @@ orientation to the data, not “WNW”.
 plot_table_components(eea_processed)
 ```
 
-![](README-unnamed-chunk-13-1.png)<!-- -->
+![](README-unnamed-chunk-15-1.png)<!-- -->
 
 Luckily, we can fix this with the `change_direction` function.
 
@@ -208,7 +212,7 @@ Plotting the table confirms the direction has been corrected.
 plot_table_components(eea_processed)
 ```
 
-![](README-unnamed-chunk-15-1.png)<!-- -->
+![](README-unnamed-chunk-17-1.png)<!-- -->
 
 Finally, we can assembly the components into a tidy dataframe using
 `assemble_table_components`.
@@ -229,6 +233,8 @@ assemble_table_components(eea_processed)   %>%
 ```
 
 ### Example 3: Consumer Price Index (time series)
+
+![](README-unnamed-chunk-19-1.png)<!-- -->
 
 Time series data require the user to manually identify the inner table
 cells. This is because some of the column groups are entered as numbers
