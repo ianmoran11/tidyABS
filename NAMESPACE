@@ -2,6 +2,7 @@
 
 export(assemble_table_components)
 export(cell_ref_2_df)
+export(change_direction)
 export(check_low_col_names)
 export(create_tidytable)
 export(enhead_tabledata)

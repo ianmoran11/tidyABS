@@ -8,9 +8,7 @@
 
 
 plot_table_components <- function(abs_sheet_processed) {
-
-  if(length(abs_sheet_processed) == 4){
-
+  if (length(abs_sheet_processed) == 4) {
     temp <-
       abs_sheet_processed %>%
       .[1:3] %>%
@@ -25,10 +23,7 @@ plot_table_components <- function(abs_sheet_processed) {
       mutate(value = coalesce(!!!syms(value_cols))) %>%
       select(type, direction, row, col, value) %>%
       bind_rows(abs_sheet_processed[[4]] %>% mutate(type = "data"))
-
-  }else{
-
-
+  } else {
     temp <-
       abs_sheet_processed %>%
       .[1:2] %>%
@@ -43,8 +38,6 @@ plot_table_components <- function(abs_sheet_processed) {
       mutate(value = coalesce(!!!syms(value_cols))) %>%
       select(type, direction, row, col, value) %>%
       bind_rows(abs_sheet_processed[[3]] %>% mutate(type = "data"))
-
-
   }
 
 

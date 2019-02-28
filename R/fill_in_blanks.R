@@ -23,14 +23,15 @@ fill_in_blanks <- function(sheet) {
     blank_df %>%
     mutate(col_old = col, col = col - 1) %>%
     mutate(address_old = address) %>%
-    select(sheet, row, col, col_old, local_format_id,address_old) %>%
+    select(sheet, row, col, col_old, local_format_id, address_old) %>%
     left_join(joiner) %>%
     mutate(address = address_old) %>%
     select(-address_old) %>%
     mutate(col = col_old) %>%
     select(-col_old) %>%
     filter(!is_blank) %>%
-    mutate(row_col = paste0(row, "_", col))  %>%     mutate(merged = 1 )
+    mutate(row_col = paste0(row, "_", col)) %>%
+    mutate(merged = 1)
 
 
 
@@ -43,8 +44,5 @@ fill_in_blanks <- function(sheet) {
     arrange(row, col)
 
   # Remove duplicates
-  sheet %>% group_by(row, col) %>% top_n(n = 1,wt = row_number()) %>% ungroup()
-
+  sheet %>% group_by(row, col) %>% top_n(n = 1, wt = row_number()) %>% ungroup()
 }
-
-

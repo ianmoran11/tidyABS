@@ -13,4 +13,3 @@ check_low_col_names <- function(col_groups) {
 
   col_groups[!uniqueness_test, ]
 }
-

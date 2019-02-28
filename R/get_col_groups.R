@@ -12,12 +12,6 @@
 
 
 get_col_groups <- function(sheet, value_ref, formats) {
-
-
-
-  print("x")
-
-
   col_df <-
     sheet %>%
     filter(!is_blank) %>%
@@ -26,19 +20,23 @@ get_col_groups <- function(sheet, value_ref, formats) {
     filter(row < value_ref$min_row) %>%
     mutate(row_temp = row) %>%
     mutate(indent = local_format_id %>%
-             map_int(possibly({
-               ~ formats$local$alignment[["indent"]][[.x]]              }, 0)) %>%
-             unlist()) %>%
+      map_int(possibly({
+        ~ formats$local$alignment[["indent"]][[.x]]
+      }, 0)) %>%
+      unlist()) %>%
     mutate(bold = local_format_id %>%
-             map_lgl(possibly({
-               ~ formats$local$font[["bold"]][[.x]]},F)) %>%
-             unlist()) %>%
+      map_lgl(possibly({
+        ~ formats$local$font[["bold"]][[.x]]
+      }, F)) %>%
+      unlist()) %>%
     mutate(italic = local_format_id %>%
-             map_lgl(possibly({~ formats$local$font[["italic"]][[.x]]},F)) %>%
-             unlist()) %>%
+      map_lgl(possibly({
+        ~ formats$local$font[["italic"]][[.x]]
+      }, F)) %>%
+      unlist()) %>%
     group_by(row_temp, indent, bold, italic) %>%
-    mutate(merged = ifelse(sum(merged,na.rm = TRUE ) == length(merged),T,F)) %>%
-    filter(merged != T ) %>%
+    mutate(merged = ifelse(sum(merged, na.rm = TRUE) == length(merged), T, F)) %>%
+    filter(merged != T) %>%
     nest() %>%
     ungroup() %>%
     mutate(row_no_name = row_temp - min(row_temp) + 1) %>%
@@ -64,10 +62,10 @@ get_col_groups <- function(sheet, value_ref, formats) {
 
   col_df %>%
     mutate(data_summary = data %>%
-             map(~ .x %>% summarise(
-               min_col = min(col, na.rm = T), max_col = max(col, na.rm = T),
-               min_row = min(row, na.rm = T), max_row = max(row, na.rm = T)
-             ))) %>%
+      map(~ .x %>% summarise(
+        min_col = min(col, na.rm = T), max_col = max(col, na.rm = T),
+        min_row = min(row, na.rm = T), max_row = max(row, na.rm = T)
+      ))) %>%
     unnest(data_summary) # %>%
   # check_low_col_names
 }

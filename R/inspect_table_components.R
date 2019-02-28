@@ -9,5 +9,3 @@
 inspect_table_components <- function(abs_sheet_processed) {
   abs_sheet_processed %>% map(~ .x$data %>% map(~ .x %>% pull(3) %>% unique()))
 }
-
-

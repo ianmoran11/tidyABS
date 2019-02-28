@@ -11,17 +11,14 @@
 
 
 
-change_direction <- function(processed_ABS_sheet,group,new_direction){
-
+change_direction <- function(processed_ABS_sheet, group, new_direction) {
   processed_ABS_sheet$col_groups <-
-    processed_ABS_sheet$col_groups  %>%
+    processed_ABS_sheet$col_groups %>%
     mutate(direction = ifelse(!!sym(names(.)[1]) == group, new_direction, direction))
 
   processed_ABS_sheet$row_groups <-
-    processed_ABS_sheet$row_groups  %>%
+    processed_ABS_sheet$row_groups %>%
     mutate(direction = ifelse(!!sym(names(.)[1]) == group, new_direction, direction))
 
   processed_ABS_sheet
-
 }
-

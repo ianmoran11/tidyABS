@@ -10,8 +10,6 @@
 #' @examples
 #' readxl_example()
 #' readxl_example("datasets.xlsx")
-#'
-
 tidyABS_example <- function(path = NULL) {
   if (is.null(path)) {
     dir(system.file("extdata", package = "tidyABS"))

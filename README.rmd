@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The TidyABS package converts excel sheets released by the Australian Bureau of Statistics into a tidy data format.    
+The TidyABS package converts excel sheets released by the Australian Bureau of Statistics into a tidy data format. It can sometimes guess the structure of the table and tidy without any hints, other times some pointers are required from the user. 
 
 Note: Files must be saved as .xlsx files. 
 
@@ -39,140 +39,133 @@ options(tibble.print_min = 3, tibble.print_max = 3)
 
 ```{r}
 library(tidyABS)
+library(tidyverse)
 ```
 
 tidyABS includes several example files.  Use the helper `tidyABS_example()` with no arguments to list them or call it with an example filename to get the path.
 
 ```{r}
-
 tidyABS_example()
-
-```
-
-### Example 1: Environmental-Economic Accounts
-
-Here's an example proccess data from the Employee Earnings and Hours release. First retriev the path of our example file:
-
-```{r}
-
-eea_path <- tidyABS_example("environmental-economic-accounts.xlsx")
-
-```
-
-We can now process Sheet 1 of that file using the function `process_ABS_sheet`
-
-
-```{r}
-
-eea_01_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
-
-print(eea_01_processed)
-
-```
-
-`mvu_01_processed` is a list of three dataframes. It stores the location and formation information of the cells that have been indentified as row names (`row_groups`) and column names (`col_groups`). It also contains the data values inside the data (`tabledata`).  
-
-We can inspect what values have been allocated to which groups using the `inspect_table_components`. Each group will be given its own column in the resulting tidy dataframe.
-
-
-```{r}
-inspect_table_components(eea_01_processed)
-
 ```
 
 
-We can alph inspect classification of cells visually using 
+### Example 1: Australian Industry
 
-
-
-```{r}
-eea_01_plot <- plot_table_components(eea_01_processed)
-
-# Just look at the first rows 
-eea_01_plot + ylim(-20,-1)
-
-```
-
-Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
+Here's an excel workbook from the Australian release. We can get its path by using the `tidyABS_example` with the the filename as an argument:
 
 ```{r}
-assemble_table_components(eea_01_processed) 
-
-```
-
-With a little extra processing, we can plot this time series.
-
-```{r}
-assemble_table_components(eea_01_processed) %>% View
-  set_names(c("row", "col", "comment", "value", "year", "tax_01", 
-"total", "total")) %>% 
-  mutate(value = as.numeric(value)) %>% 
-  mutate(year =  as.numeric(str_extract(year,"[0-9]{4}")))
-
-```
-
-
-### Example 2: Australian Industry
-
-Here's an example proccess data from the Employee Earnings and Hours release. First retriev the path of our example file:
-
-```{r}
-
-tidyABS_example()
-
 ai_path <- tidyABS_example("australian-industry.xlsx")
-
 ```
 
-We can now process Sheet 1 of that file using the function `process_ABS_sheet`
-
+We can now process the first sheet, "Table_1", of the file using the function `process_ABS_sheet`
 
 ```{r}
-devtools::install() ;8
-
 ai_01_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
 
 ai_01_processed %>% str(2)
-
 ```
 
-`mvu_01_processed` is a list of three dataframes. It stores the location and formation information of the cells that have been indentified as row names (`row_groups`) and column names (`col_groups`). It also contains the data values inside the data (`tabledata`).  
+`mvu_01_processed` is a list of three dataframes. It stores the location and format information of the cells that have been indentified as row names (`row_groups`) and column names (`col_groups`). It also contains the inner cell values of the table (`tabledata`).  
 
-We can inspect what values have been allocated to which groups using the `inspect_table_components`. Each group will be given its own column in the resulting tidy dataframe.
+We can inspect `mvu_01_processed` to see what values have been allocated to which groups using the `inspect_table_components` function.
 
 
 ```{r}
 inspect_table_components(ai_01_processed)
+```
 
+Each of the groups listed will be given its own column in the resulting tidy dataframe.
+
+
+ As you can see:
++ `col_group1` represents the measure associated with the value in the table  
++ `col_group2` represents the units of value in the table  
++ `row_group1` represents the year associated with the value in the table  
++ `row_group2` industry associated with value in the table. 
+
+We can also  can visually inspect how these groups are spatially layed out in the spreadsheet any how tidyABS will relate them to table values with `plot_table_components`.
+
+```{r}
+plot_table_components(ai_01_processed) + ylim(-50,0)
 ```
 
 
-We can alph inspect classification of cells visually using 
-
-
+Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
 ```{r}
-eea_01_plot <- plot_table_components(ai_01_processed)
+assemble_table_components(ai_01_processed)
+```
 
-# Just look at the first rows 
+All that is left to do is to rename columns are convert values to the appropriate data types. Too easy!
+
+### Example 2: Environmental-Economic Accounts
+
+Unfortunately it is not always easy. 
+
+Here's an example proccess data from the Environmental Economic Accounts. First, lets retrieve the path of our example file:
+
+```{r}
+eea_path <- tidyABS_example("environmental-economic-accounts.xlsx")
+```
+
+Then sheet 1 ("Table 6.1") of that file using the function `process_ABS_sheet`
+
+```{r}
+eea_01_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
+```
+
+On visual inspection, We can see some `row_group_01` has been given a "W" orientation to the data, not "WNW". 
+
+```{r}
+plot_table_components(eea_01_processed)
+```
 
 
+Luckily, we can fix this with the `change_direction` function. 
+
+```{r}
+eea_01_processed <- 
+  eea_01_processed %>% 
+  change_direction("row_group_01","WNW")
+```
+
+Plotting the table shows that it as been corrected. 
+
+```{r}
+plot_table_components(eea_01_processed)
 ```
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
 ```{r}
-assemble_table_components(ai_01_processed)   %>% View
-
+assemble_table_components(eea_01_processed)  
 ```
 
-With a little extra processing, we can plot this time series.
+
+### Example 3: Consumer Price Index (time series)
+
+Time series data require the user to manually identify the inner table cells. This is because some of the column groups are entered as numbers --- for example, collection month. 
+
+I recommend using the [`readABS`](https://github.com/MattCowgill/readabs) package. This package was built for process ABS time series data and does not require any manual identifcation of table cells. 
+
+That said, here's how you would do this with `tidyABS`.
 
 ```{r}
-assemble_table_components(eea_01_processed) %>% View
-  set_names(c("row", "col", "comment", "value", "year", "tax_01", 
-"total", "total")) %>% 
-  mutate(value = as.numeric(value)) %>% 
-  mutate(year =  as.numeric(str_extract(year,"[0-9]{4}")))
+cpi_path <- tidyABS_example("consumer-price-index.xlsx")
+```
 
+We need to identify the inner table cells using the `manual_value_references` argument to `process_ABS_sheet`.This arguments takes a vectors addresses, identifying the inner corners of the table. 
+
+```{r}
+cpi_processed <- 
+  process_ABS_sheet(path = cpi_path, sheets = "Data1",
+                    manual_value_references = c("B11","AB11","B292","AB292"))
+```
+
+And here is the resulting data frame. 
+
+```{r}
+inspect_table_components(cpi_processed)
+
+assemble_table_components(cpi_processed) 
 ```

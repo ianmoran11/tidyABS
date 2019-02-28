@@ -13,15 +13,11 @@ process_ABS_sheet <-
 
     continue <- TRUE
 
-    while(continue){
-
+    while (continue) {
       sheet_original <- sheet
       sheet <- sheet %>% fill_in_blanks()
 
-      continue <- !identical(sheet_original,sheet)
-
-
-
+      continue <- !identical(sheet_original, sheet)
     }
 
 
@@ -47,6 +43,7 @@ process_ABS_sheet <-
     unique_meta <- meta_df$data %>% map(3) %>% map(unique)
     unique_rows <- row_groups$data %>% map(3) %>% map(unique)
 
+
     # Remove meta data /col group duplicates
     joint_col <-
       full_join(
@@ -68,19 +65,9 @@ process_ABS_sheet <-
 
     col_groups <- col_groups[cols_to_keep, ]
 
-    if(keep_meta_data == FALSE){
-
+    if (keep_meta_data == FALSE) {
       list(col_groups = col_groups, row_groups = row_groups, tabledata = tabledata)
-
-    }else{
-
+    } else {
       list(col_groups = col_groups, row_groups = row_groups, meta_df = meta_df, tabledata = tabledata)
-
     }
-
-
-
-
-
-
   }

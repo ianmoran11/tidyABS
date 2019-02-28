@@ -29,14 +29,20 @@ get_meta_df <- function(sheet, value_ref, col_groups, formats) {
     mutate(col_temp = col) %>%
     mutate(row_temp = row) %>%
     mutate(indent = local_format_id %>%
-             map(~ formats$local$alignment[["indent"]][[.x]]) %>%
-             unlist()) %>%
+      map_int(possibly({
+        ~ formats$local$alignment[["indent"]][[.x]]
+      }, 0L)) %>%
+      unlist()) %>%
     mutate(bold = local_format_id %>%
-             map(~ formats$local$font[["bold"]][[.x]]) %>%
-             unlist()) %>%
+      map_lgl(possibly({
+        ~ formats$local$font[["bold"]][[.x]]
+      }, F)) %>%
+      unlist()) %>%
     mutate(italic = local_format_id %>%
-             map(~ formats$local$font[["italic"]][[.x]]) %>%
-             unlist()) %>%
+      map_lgl(possibly({
+        ~ formats$local$font[["italic"]][[.x]]
+      }, F)) %>%
+      unlist()) %>%
     group_by(col_temp, row_temp, indent, bold, italic) %>%
     nest() %>%
     ungroup() %>%
@@ -61,9 +67,9 @@ get_meta_df <- function(sheet, value_ref, col_groups, formats) {
     mutate(direction = "WNW") %>%
     dplyr::select(meta_data, direction, data, indent, bold, italic) %>%
     mutate(data_summary = data %>%
-             map(~ .x %>% summarise(
-               min_col = min(col, na.rm = T), max_col = max(col, na.rm = T),
-               min_row = min(row, na.rm = T), max_row = max(row, na.rm = T)
-             ))) %>%
+      map(~ .x %>% summarise(
+        min_col = min(col, na.rm = T), max_col = max(col, na.rm = T),
+        min_row = min(row, na.rm = T), max_row = max(row, na.rm = T)
+      ))) %>%
     unnest(data_summary)
 }

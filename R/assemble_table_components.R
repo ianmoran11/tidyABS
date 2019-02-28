@@ -7,9 +7,7 @@
 #' @export
 
 assemble_table_components <- function(table_componsents) {
-
-  if(length(table_componsents) == 4){
-
+  if (length(table_componsents) == 4) {
     bind_rows(table_componsents[1:3]) -> col_groups
 
 
@@ -21,10 +19,7 @@ assemble_table_components <- function(table_componsents) {
 
     map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
       reduce(full_join)
-
-  }else{
-
-
+  } else {
     bind_rows(table_componsents[1:2]) -> col_groups
 
 
@@ -36,9 +31,5 @@ assemble_table_components <- function(table_componsents) {
 
     map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
       reduce(full_join)
-
-
   }
-
-
 }

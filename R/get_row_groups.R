@@ -14,15 +14,6 @@
 
 
 get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_groups) {
-
-  1
-
-  ## Used for debugging
-  # sheet <- sheet
-  # value_ref <- value_ref
-  # formats <- formats
-  # col_groups <- col_groups
-
   row_name_df <-
     sheet %>%
     filter(
@@ -33,14 +24,20 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
     ) %>%
     mutate(col_temp = col) %>%
     mutate(indent = local_format_id %>%
-             map(~ formats$local$alignment[["indent"]][[.x]]) %>%
-             unlist()) %>%
+      map_int(possibly({
+        ~ formats$local$alignment[["indent"]][[.x]]
+      }, 0L)) %>%
+      unlist()) %>%
     mutate(bold = local_format_id %>%
-             map(~ formats$local$font[["bold"]][[.x]]) %>%
-             unlist()) %>%
+      map_lgl(possibly({
+        ~ formats$local$font[["bold"]][[.x]]
+      }, F)) %>%
+      unlist()) %>%
     mutate(italic = local_format_id %>%
-             map(~ formats$local$font[["italic"]][[.x]]) %>%
-             unlist())
+      map_lgl(possibly({
+        ~ formats$local$font[["italic"]][[.x]]
+      }, F)) %>%
+      unlist())
 
 
   if (!is.null(added_row_groups)) {
@@ -51,10 +48,11 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
 
     row_name_df <-
       row_name_df %>%
-      left_join(added_row_df)  %>%
-      mutate_at(.vars = vars(indent,bold,italic ),
-                .funs = funs(ifelse(is.na(added_group_no),.,NA)))
-
+      left_join(added_row_df) %>%
+      mutate_at(
+        .vars = vars(indent, bold, italic),
+        .funs = funs(ifelse(is.na(added_group_no), ., NA))
+      )
   } else {
     row_name_df <-
       row_name_df %>%
@@ -97,10 +95,10 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
     mutate(direction = ifelse(row_sum == 0, "NNW", "W")) %>%
     dplyr::select(row_group, direction, data, indent, bold, italic, added_group_no) %>%
     mutate(data_summary = data %>%
-             map(~ .x %>% summarise(
-               min_col = min(col, na.rm = T), max_col = max(col, na.rm = T),
-               min_row = min(row, na.rm = T), max_row = max(row, na.rm = T)
-             ))) %>%
+      map(~ .x %>% summarise(
+        min_col = min(col, na.rm = T), max_col = max(col, na.rm = T),
+        min_row = min(row, na.rm = T), max_row = max(row, na.rm = T)
+      ))) %>%
     unnest(data_summary)
 }
 
