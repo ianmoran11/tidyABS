@@ -51,8 +51,8 @@ our filename as the argument:
 ai_path <- tidyABS_example("australian-industry.xlsx")
 ```
 
-We can now process *Table\_1* (the first sheet of the workbook) using
-the `process_ABS_sheet` function.
+We can now process `Table_1` (the first sheet of the workbook) using the
+`process_ABS_sheet` function.
 
 ``` r
 ai_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 

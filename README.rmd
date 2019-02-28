@@ -54,7 +54,7 @@ Here's an excel workbook from the Australian  Industry publication. We retrieve 
 ai_path <- tidyABS_example("australian-industry.xlsx")
 ```
 
-We can now process _Table_1_ (the first sheet of the workbook) using the `process_ABS_sheet` function.
+We can now process `Table_1` (the first sheet of the workbook) using the `process_ABS_sheet` function.
 
 ```{r message=FALSE, warning=FALSE}
 ai_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
