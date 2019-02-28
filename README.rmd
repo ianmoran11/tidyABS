@@ -14,13 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ## Overview
 
 The TidyABS package converts ABS excel sheets into a tidy dataframes. It can often guess the structure of the excel table using heuristics and tidy without any hints from the user, however sometimes pointers are necessary. 
 
 _Note: tidyABS works with .xlsx files only. ABS files are often in .xls format, so conversion is required._
-
 
 ## Installation
 
@@ -56,96 +54,81 @@ Here's an excel workbook from the Australian  Industry publication. We retrieve 
 ai_path <- tidyABS_example("australian-industry.xlsx")
 ```
 
-We can now process "Table_1" (the first sheet of the workbook) using the `process_ABS_sheet` function.
+We can now process _Table_1_ (the first sheet of the workbook) using the `process_ABS_sheet` function.
 
 ```{r message=FALSE, warning=FALSE}
-ai_01_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
+ai_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
 
-ai_01_processed %>% str(1)
+ai_processed %>% str(1)
 ```
 
-As you can see `mvu_01_processed` is a list of three dataframes. It stores the location and format information of row names (`row_groups`) and column names (`col_groups`) inner cell values of the table (`tabledata`).  
+As you can see `ai_processed` is a list of three dataframes. It stores the location and format information of row names (`row_groups`) and column names (`col_groups`) inner cell values of the table (`tabledata`).  
 
-We can inspect `mvu_01_processed` to see what values have been classified as row and column cells using the `inspect_table_components` function.
+We can inspect `ai_processed` to see what values have been classified as row and column cells using the `inspect_table_components` function.
 
 
 ```{r message=FALSE, warning=FALSE}
-inspect_table_components(ai_01_processed)
+inspect_table_components(ai_processed)
 ```
-
-As you can see:  
-* `col_group1` represents the measure associated with the value in the table  
-* `col_group2` represents the units of value in the table  
-* `row_group1` represents the year associated with the value in the table  
-* `row_group2` industry associated with value in the table. 
 
 We can also  can visually inspect how these groups are spatially layed out in the spreadsheet any how tidyABS will relate them to table values with `plot_table_components`.
 
-```{r fig.height=8, fig.width=16, message=FALSE, warning=FALSE}
-plot_table_components(ai_01_processed) + 
-  ylim(-30,0) + xlim(0,5)
+```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+plot_table_components(ai_processed) + 
+  ylim(-30,0) 
 ```
-
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
 ```{r message=FALSE, warning=FALSE}
-assemble_table_components(ai_01_processed) %>% 
+assemble_table_components(ai_processed) %>% 
   glimpse
 ```
 
-All that is left to do is to rename columns are convert values to the appropriate data types. Too easy!
+All that is left to do is to rename columns are convert values to the appropriate data types. 
 
 ### Example 2: Environmental-Economic Accounts
 
-Unfortunately it is not always easy. 
-
-Here's an example proccess data from the Environmental Economic Accounts. First, lets retrieve the path of our example file:
+Here's an example that requires some manual work, the Environmental Economic Accounts. Let's retrieve the path of our example file and proces it:
 
 ```{r message=FALSE, warning=FALSE}
 eea_path <- tidyABS_example("environmental-economic-accounts.xlsx")
+
+eea_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
 ```
 
-Then sheet 1 ("Table 6.1") of that file using the function `process_ABS_sheet`
+On visual inspection, We can see `row_group_01` has been given a "W" orientation to the data, not "WNW". 
 
-```{r message=FALSE, warning=FALSE}
-eea_01_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
+```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+plot_table_components(eea_processed)
 ```
-
-On visual inspection, We can see some `row_group_01` has been given a "W" orientation to the data, not "WNW". 
-
-```{r fig.height=8, fig.width=16, message=FALSE, warning=FALSE}
-plot_table_components(eea_01_processed)
-```
-
 
 Luckily, we can fix this with the `change_direction` function. 
 
 ```{r message=FALSE, warning=FALSE}
-eea_01_processed <- 
-  eea_01_processed %>% 
+eea_processed <- 
+  eea_processed %>% 
   change_direction("row_group_01","WNW")
 ```
 
-Plotting the table shows that it as been corrected. 
+Plotting the table confirms the direction has been corrected. 
 
-```{r fig.height=8, fig.width=16, message=FALSE, warning=FALSE}
-plot_table_components(eea_01_processed)
+```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+plot_table_components(eea_processed)
 ```
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
 ```{r message=FALSE, warning=FALSE}
-assemble_table_components(eea_01_processed)   %>% 
+assemble_table_components(eea_processed)   %>% 
   glimpse
 ```
-
 
 ### Example 3: Consumer Price Index (time series)
 
 Time series data require the user to manually identify the inner table cells. This is because some of the column groups are entered as numbers --- for example, collection month. 
 
-I recommend using the [`readABS`](https://github.com/MattCowgill/readabs) package. This package was built for process ABS time series data and does not require any manual identifcation of table cells. 
+I recommend using the [`readABS`](https://github.com/MattCowgill/readabs) package. This package was built for importing ABS time series data and does not require any manual identifcation of table cells. 
 
 That said, here's how you would do this with `tidyABS`.
 
