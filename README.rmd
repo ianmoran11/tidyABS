@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The TidyABS package converts excel sheets released by the Australian Bureau of Statistics into a tidy data format. It can sometimes guess the structure of the table and tidy without any hints, other times some pointers are required from the user. 
+The TidyABS package converts ABS excel sheets into a tidy dataframes. It can often guess the structure of the excel table using heuristics and tidy without any hints from the user, however sometimes pointers are necessary. 
 
-Note: Files must be saved as .xlsx files. 
+_Note: tidyABS works with .xlsx files only. ABS files are often in .xls format, so conversion is required._
 
 
 ## Installation
@@ -42,22 +42,21 @@ library(tidyABS)
 library(tidyverse)
 ```
 
-tidyABS includes several example files.  Use the helper `tidyABS_example()` with no arguments to list them or call it with an example filename to get the path.
+tidyABS includes several example files. Use the helper `tidyABS_example()` with no arguments to list these files:
 
 ```{r message=FALSE, warning=FALSE}
 tidyABS_example()
 ```
 
-
 ### Example 1: Australian Industry
 
-Here's an excel workbook from the Australian release. We can get its path by using the `tidyABS_example` with the the filename as an argument:
+Here's an excel workbook from the Australian  Industry publication. We retrieve the path of this file  using the `tidyABS_example` function with our filename as the argument:
 
 ```{r message=FALSE, warning=FALSE}
 ai_path <- tidyABS_example("australian-industry.xlsx")
 ```
 
-We can now process the first sheet, "Table_1", of the file using the function `process_ABS_sheet`
+We can now process "Table_1" (the first sheet of the workbook) using the `process_ABS_sheet` function.
 
 ```{r message=FALSE, warning=FALSE}
 ai_01_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1") 
@@ -65,35 +64,34 @@ ai_01_processed <-  process_ABS_sheet(path = ai_path, sheets = "Table_1")
 ai_01_processed %>% str(1)
 ```
 
-`mvu_01_processed` is a list of three dataframes. It stores the location and format information of the cells that have been indentified as row names (`row_groups`) and column names (`col_groups`). It also contains the inner cell values of the table (`tabledata`).  
+As you can see `mvu_01_processed` is a list of three dataframes. It stores the location and format information of row names (`row_groups`) and column names (`col_groups`) inner cell values of the table (`tabledata`).  
 
-We can inspect `mvu_01_processed` to see what values have been allocated to which groups using the `inspect_table_components` function.
+We can inspect `mvu_01_processed` to see what values have been classified as row and column cells using the `inspect_table_components` function.
 
 
 ```{r message=FALSE, warning=FALSE}
 inspect_table_components(ai_01_processed)
 ```
 
-Each of the groups listed will be given its own column in the resulting tidy dataframe.
-
-
- As you can see:
-+ `col_group1` represents the measure associated with the value in the table  
-+ `col_group2` represents the units of value in the table  
-+ `row_group1` represents the year associated with the value in the table  
-+ `row_group2` industry associated with value in the table. 
+As you can see:  
+* `col_group1` represents the measure associated with the value in the table  
+* `col_group2` represents the units of value in the table  
+* `row_group1` represents the year associated with the value in the table  
+* `row_group2` industry associated with value in the table. 
 
 We can also  can visually inspect how these groups are spatially layed out in the spreadsheet any how tidyABS will relate them to table values with `plot_table_components`.
 
-```{r message=FALSE, warning=FALSE}
-plot_table_components(ai_01_processed) + ylim(-50,0)
+```{r fig.height=8, fig.width=16, message=FALSE, warning=FALSE}
+plot_table_components(ai_01_processed) + 
+  ylim(-30,0) + xlim(0,5)
 ```
 
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
 ```{r message=FALSE, warning=FALSE}
-assemble_table_components(ai_01_processed)
+assemble_table_components(ai_01_processed) %>% 
+  glimpse
 ```
 
 All that is left to do is to rename columns are convert values to the appropriate data types. Too easy!
@@ -116,7 +114,7 @@ eea_01_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
 
 On visual inspection, We can see some `row_group_01` has been given a "W" orientation to the data, not "WNW". 
 
-```{r fig.height=10, fig.width=20, message=FALSE, warning=FALSE}
+```{r fig.height=8, fig.width=16, message=FALSE, warning=FALSE}
 plot_table_components(eea_01_processed)
 ```
 
@@ -131,14 +129,15 @@ eea_01_processed <-
 
 Plotting the table shows that it as been corrected. 
 
-```{r fig.height=10, fig.width=20, message=FALSE, warning=FALSE}
+```{r fig.height=8, fig.width=16, message=FALSE, warning=FALSE}
 plot_table_components(eea_01_processed)
 ```
 
 Finally, we can assembly the components into a tidy dataframe using `assemble_table_components`.
 
 ```{r message=FALSE, warning=FALSE}
-assemble_table_components(eea_01_processed)  
+assemble_table_components(eea_01_processed)   %>% 
+  glimpse
 ```
 
 
@@ -165,7 +164,6 @@ cpi_processed <-
 And here is the resulting data frame. 
 
 ```{r message=FALSE, warning=FALSE}
-inspect_table_components(cpi_processed)
-
-assemble_table_components(cpi_processed) 
+assemble_table_components(cpi_processed)   %>% 
+  glimpse
 ```
