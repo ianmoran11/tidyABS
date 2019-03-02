@@ -1,6 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+**Warning: tidyABS is in early development. Please use for
+experimentation only.**
+
 ## Overview
 
 The tidyABS package converts ABS excel tables to tidy data frames. It

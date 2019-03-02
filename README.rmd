@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 
-*Warning: tidyABS is in early development. Please use only for experimentation.*
+**Warning: tidyABS is in early development. Please use for experimentation only.**
 
 ## Overview
 
