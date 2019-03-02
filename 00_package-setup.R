@@ -32,6 +32,7 @@ usethis::use_package("purrr", type = "Imports")
 usethis::use_package("stringi", type = "Imports")
 usethis::use_package("forcats", type = "Imports")
 usethis::use_package("tidyverse", type = "Imports")
+usethis::use_package("cellranger", type = "Imports")
 
 devtools::install()
 

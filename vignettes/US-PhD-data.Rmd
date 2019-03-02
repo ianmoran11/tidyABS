@@ -28,11 +28,11 @@ Here are a couple of examples using tidyABS on a non-ABS excel table.
 Here's a mininal example.
 ```{r message=FALSE, warning=FALSE}
 tidyABS_example("PhD_major-field.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B6", "B50", "O50", "O6")) %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B6:O50") %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
   assemble_table_components() %>%
-  glimpse()
+  str()
 ```
 
 ##### Step-through
@@ -42,7 +42,7 @@ First, read in the sheet, specifying table corners.
 ```{r message=FALSE, warning=FALSE}
 phd_field_df_components <-
   tidyABS_example("PhD_major-field.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B6", "B50", "O50", "O6"))
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B6:O50")
 ```
 
 Check the orietation of cells and make corrections. 
@@ -56,7 +56,7 @@ phd_field_df_components <-
   change_direction("row_group_02", "WNW")
 ```
 
-Check the orietation of cells and make corrections. 
+Assemble.
 ```{r message=FALSE, warning=FALSE}
 phd_field_df <-
   phd_field_df_components %>%
@@ -71,7 +71,7 @@ phd_field_df %>% glimpse()
 Here's a mininal example.
 ```{r message=FALSE, warning=FALSE}
 tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B7", "L7", "B277", "L277")) %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B7:L277") %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
   change_direction("row_group_03", "WNW") %>%
@@ -86,7 +86,7 @@ First, read in the sheet, specifying table corners.
 ```{r message=FALSE, warning=FALSE}
 phd_background_components <-
   tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B7", "L7", "B277", "L277"))
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B7:L277")
 ```
 
 Check the orietation of cells and make corrections. 
@@ -101,7 +101,7 @@ phd_background_components <-
   change_direction("row_group_03", "WNW")
 ```
 
-Check the orietation of cells and make corrections. 
+Assemble.
 ```{r message=FALSE, warning=FALSE}
 phd_background_df <-
   phd_background_components %>%

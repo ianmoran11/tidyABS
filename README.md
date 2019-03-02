@@ -55,9 +55,11 @@ The tidyABS package contains several example files. Use the helper
 
 ``` r
 tidyABS_example()
-#> [1] "australian-industry.xlsx"            
-#> [2] "consumer-price-index.xlsx"           
-#> [3] "environmental-economic-accounts.xlsx"
+#> [1] "australian-industry.xlsx"                            
+#> [2] "consumer-price-index.xlsx"                           
+#> [3] "environmental-economic-accounts.xlsx"                
+#> [4] "PhD_ subfield-citizenship-status-ethnicity-race.xlsx"
+#> [5] "PhD_major-field.xlsx"
 ```
 
 #### Example 1: Australian Industry
@@ -141,7 +143,7 @@ inspect_table_components(ai_processed)
 ```
 
 We can also visualize how these groups are spatially layed out in the
-spreadsheet any how tidyABS will relate them to table values with the
+spreadsheet and how tidyABS will relate them to table values with the
 function `plot_table_components`. Row names directly to the left of
 their data points should be labelled “W”, and column names directly
 above should be labelled “N”. (See the
@@ -257,7 +259,7 @@ addresses, identifying the inner corners of the table.
 cpi_processed <-
   process_ABS_sheet(
     path = cpi_path, sheets = "Data1",
-    manual_value_references = c("B11", "AB11", "B292", "AB292")
+    manual_value_references = "B11:AB292"
   )
 ```
 

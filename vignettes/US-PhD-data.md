@@ -14,22 +14,21 @@ Here’s a mininal example.
 
 ``` r
 tidyABS_example("PhD_major-field.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B6", "B50", "O50", "O6")) %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B6:O50") %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
   assemble_table_components() %>%
-  glimpse()
-#> Observations: 630
-#> Variables: 9
-#> $ row          <int> 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7...
-#> $ col          <int> 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 2...
-#> $ comment      <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
-#> $ value        <chr> "32365", "100", "38886", "100", "42539", "100", "...
-#> $ col_group_01 <chr> "1987", "1987", "1992", "1992", "1997", "1997", "...
-#> $ col_group_02 <chr> "Number", "Percent", "Number", "Percent", "Number...
-#> $ row_group_01 <chr> "All fields", "All fields", "All fields", "All fi...
-#> $ row_group_02 <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
-#> $ row_group_03 <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+  str()
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    630 obs. of  9 variables:
+#>  $ row         : int  6 6 6 6 6 6 6 6 6 6 ...
+#>  $ col         : int  2 3 4 5 6 7 8 9 10 11 ...
+#>  $ comment     : chr  NA NA NA NA ...
+#>  $ value       : chr  "32365" "100" "38886" "100" ...
+#>  $ col_group_01: chr  "1987" "1987" "1992" "1992" ...
+#>  $ col_group_02: chr  "Number" "Percent" "Number" "Percent" ...
+#>  $ row_group_01: chr  "All fields" "All fields" "All fields" "All fields" ...
+#>  $ row_group_02: chr  NA NA NA NA ...
+#>  $ row_group_03: chr  NA NA NA NA ...
 ```
 
 ##### Step-through
@@ -39,7 +38,7 @@ First, read in the sheet, specifying table corners.
 ``` r
 phd_field_df_components <-
   tidyABS_example("PhD_major-field.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B6", "B50", "O50", "O6"))
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B6:O50")
 ```
 
 Check the orietation of cells and make corrections.
@@ -88,7 +87,7 @@ example.
 
 ``` r
 tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B7", "L7", "B277", "L277")) %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B7:L277") %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
   change_direction("row_group_03", "WNW") %>%
@@ -117,7 +116,7 @@ First, read in the sheet, specifying table corners.
 ``` r
 phd_background_components <-
   tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B7", "L7", "B277", "L277"))
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B7:L277")
 ```
 
 Check the orietation of cells and make corrections.

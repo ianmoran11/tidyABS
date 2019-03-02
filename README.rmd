@@ -166,7 +166,7 @@ We need to identify the inner table cells using the `manual_value_references` ar
 cpi_processed <-
   process_ABS_sheet(
     path = cpi_path, sheets = "Data1",
-    manual_value_references = c("B11", "AB11", "B292", "AB292")
+    manual_value_references = "B11:AB292"
   )
 ```
 

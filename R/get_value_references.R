@@ -20,15 +20,15 @@ get_value_references <- function(sheet, manual_value_references) {
       )
   } else {
     # Use manual values
-    cell_ref_df <-
-      manual_value_references %>%
-      map_df(cell_ref_2_df)
 
-    data_frame(
-      min_col = min(as.integer(cell_ref_df$column)),
-      max_col = max(as.integer(cell_ref_df$column)),
-      min_row = min(as.integer(cell_ref_df$row)),
-      max_row = max(as.integer(cell_ref_df$row))
-    )
+    cell_ref_df <- as_tibble(cellranger::as.cell_limits(manual_value_references))
+
+    cell_ref_df[,1:2] %>%
+      set_names(c("min","max")) %>%
+      mutate(dimension = c("row","col")) %>%
+      gather(key, value, -dimension) %>%
+      unite(label, key, dimension, sep = "_") %>%
+      spread(label, value )
+
   }
 }
