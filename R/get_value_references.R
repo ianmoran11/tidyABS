@@ -9,6 +9,7 @@
 
 get_value_references <- function(sheet, manual_value_references) {
 
+
   # Automatic producedure
   if (is.null(manual_value_references)) {
     sheet %>%
@@ -24,10 +25,10 @@ get_value_references <- function(sheet, manual_value_references) {
       map_df(cell_ref_2_df)
 
     data_frame(
-      min_col = as.integer(min(cell_ref_df$column)),
-      max_col = as.integer(max(cell_ref_df$column)),
-      min_row = as.integer(min(cell_ref_df$row)),
-      max_row = as.integer(max(cell_ref_df$row))
+      min_col = min(as.integer(cell_ref_df$column)),
+      max_col = max(as.integer(cell_ref_df$column)),
+      min_row = min(as.integer(cell_ref_df$row)),
+      max_row = max(as.integer(cell_ref_df$row))
     )
   }
 }

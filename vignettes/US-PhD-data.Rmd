@@ -1,0 +1,109 @@
+---
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r options, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(tidyABS)
+```
+
+## Tidying excel sheets from The Survey of Earned Doctorates
+
+Here are a couple of examples using tidyABS on a non-ABS excel table. 
+
+#### Table 12. Doctorate recipients, by major field of study: Selected years, 1987–2017
+
+##### Minimal code 
+Here's a mininal example.
+```{r message=FALSE, warning=FALSE}
+tidyABS_example("PhD_major-field.xlsx") %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B6", "B50", "O50", "O6")) %>%
+  change_direction("row_group_01", "WNW") %>%
+  change_direction("row_group_02", "WNW") %>%
+  assemble_table_components() %>%
+  glimpse()
+```
+
+##### Step-through
+
+First, read in the sheet, specifying table corners.  
+
+```{r message=FALSE, warning=FALSE}
+phd_field_df_components <-
+  tidyABS_example("PhD_major-field.xlsx") %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B6", "B50", "O50", "O6"))
+```
+
+Check the orietation of cells and make corrections. 
+
+```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+phd_field_df_components %>% plot_table_components()
+
+phd_field_df_components <-
+  phd_field_df_components %>%
+  change_direction("row_group_01", "WNW") %>%
+  change_direction("row_group_02", "WNW")
+```
+
+Check the orietation of cells and make corrections. 
+```{r message=FALSE, warning=FALSE}
+phd_field_df <-
+  phd_field_df_components %>%
+  assemble_table_components()
+
+phd_field_df %>% glimpse()
+```
+
+#### Table 22. Doctorate recipients, by subfield of study, citizenship status, ethnicity, and race: 2017
+
+##### Minimal code 
+Here's a mininal example.
+```{r message=FALSE, warning=FALSE}
+tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B7", "L7", "B277", "L277")) %>%
+  change_direction("row_group_01", "WNW") %>%
+  change_direction("row_group_02", "WNW") %>%
+  change_direction("row_group_03", "WNW") %>%
+  assemble_table_components() %>%
+  glimpse()
+```
+
+##### Step-through
+
+First, read in the sheet, specifying table corners.  
+
+```{r message=FALSE, warning=FALSE}
+phd_background_components <-
+  tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
+  process_ABS_sheet(path = ., sheets = 1, manual_value_references = c("B7", "L7", "B277", "L277"))
+```
+
+Check the orietation of cells and make corrections. 
+
+```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+phd_background_components %>% plot_table_components() + ylim(-30, 0)
+
+phd_background_components <-
+  phd_background_components %>%
+  change_direction("row_group_01", "WNW") %>%
+  change_direction("row_group_02", "WNW") %>%
+  change_direction("row_group_03", "WNW")
+```
+
+Check the orietation of cells and make corrections. 
+```{r message=FALSE, warning=FALSE}
+phd_background_df <-
+  phd_background_components %>%
+  assemble_table_components()
+```

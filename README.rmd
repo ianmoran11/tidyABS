@@ -89,7 +89,7 @@ We can inspect the row and column names in  `ai_processed` using the `inspect_ta
 inspect_table_components(ai_processed)
 ```
 
-We can also visualize how these groups are spatially layed out in the spreadsheet any how tidyABS will relate them to table values with the function `plot_table_components`. Row names directly to the left of their data points should be labelled "W", and column names directly above should be labelled "N". (See the [unpivotr](https://github.com/nacnudus/unpivotr) package for more information.)
+We can also visualize how these groups are spatially layed out in the spreadsheet and how tidyABS will relate them to table values with the function `plot_table_components`. Row names directly to the left of their data points should be labelled "W", and column names directly above should be labelled "N". (See the [unpivotr](https://github.com/nacnudus/unpivotr) package for more information.)
 
 ```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
 plot_table_components(ai_processed) +

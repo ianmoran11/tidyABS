@@ -12,6 +12,7 @@
 
 
 get_col_groups <- function(sheet, value_ref, formats) {
+
   col_df <-
     sheet %>%
     filter(!is_blank) %>%

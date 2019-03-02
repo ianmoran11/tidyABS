@@ -14,6 +14,8 @@
 
 
 get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_groups) {
+
+
   row_name_df <-
     sheet %>%
     filter(
@@ -92,7 +94,7 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
 
 
   row_name_df %>%
-    mutate(direction = ifelse(row_sum == 0, "NNW", "W")) %>%
+    mutate(direction = ifelse(row_sum == 0, "WNW", "W")) %>%
     dplyr::select(row_group, direction, data, indent, bold, italic, added_group_no) %>%
     mutate(data_summary = data %>%
       map(~ .x %>% summarise(
