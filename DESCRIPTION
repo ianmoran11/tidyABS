@@ -1,12 +1,12 @@
 Package: tidyABS
-Title: What the Package Does (One Line, Title Case)
+Title: The tidyABS package converts ABS excel tables to tidy data frames.
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Ian",
+           family = "Moran",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph).
+           email = "ian.moran11@gmail.com")
+Description: The tidyABS package converts ABS excel tables to tidy data frames. It uses rules-of-thumb to determine the structure of excel tables, however it sometimes requires pointers from the user.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
