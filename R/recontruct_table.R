@@ -1,4 +1,4 @@
-#' recontruct_table
+#' reconstruct_table
 #'
 #' Reconstructs the table components to structure of oringinal excel file.
 #'
@@ -8,7 +8,7 @@
 
 
 
-recontruct_table <-
+reconstruct_table <-
   function(table_components){
 
     #!#!#!# Use xltabr here
@@ -21,11 +21,13 @@ recontruct_table <-
                                      paste(str_pad(as.character(row),width = 5,pad = "0"),
                                            .,
                                            sep = "_")))) %>%
+      mutate( cols = paste3(str_pad(as.character(col),width = 5,pad = "0"), !!!syms(names(.)[str_detect(names(.),"col_")]), sep = "_")) %>%
       select(-row,-col,-comment) %>%
-      mutate( cols = paste3(!!!syms(names(.)[str_detect(names(.),"col_")]), sep = "_")) %>%
       select(-matches("col_"))  %>%
       mutate(value = as.numeric(value)) %>%
       spread(cols,value) %>%
+      select(everything(), sort(names(.)[str_detect(names(.),"^[0-9]{5}")])) %>%
+      set_names(str_remove(names(.),"^[0-9]{5}_")) %>%
       arrange(!!!syms(names(.)[str_detect(names(.),"row_")])) %>%
       mutate_at(.vars = vars(matches("row_")),.funs = funs( ifelse(is.na(.), NA, str_remove_all(.,"[0-9]{5}_"))))
 

@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r options, message=FALSE, warning=FALSE, include=FALSE}
+library(magick)
 library(tidyverse)
 library(tidyABS)
 ```
@@ -56,6 +57,20 @@ phd_field_df_components <-
   change_direction("row_group_02", "WNW")
 ```
 
+Check the structure of the table implied by `phd_field_df_components` against the original excel table. If tidyABS has not identified row and column names correctly, the output below will not line up with the original excel table.   
+
+```{r fig.height=6, message=FALSE, warning=FALSE}
+phd_field_df_components %>% reconstruct_table() 
+```
+
+Using `View()` is useful here:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.width=25}
+magick::image_read("phd_field_df_components_view.png")
+```
+
+
+
 Assemble.
 ```{r message=FALSE, warning=FALSE}
 phd_field_df <-
@@ -75,6 +90,7 @@ tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
   change_direction("row_group_03", "WNW") %>%
+  change_direction("row_group_04", "WNW") %>%
   assemble_table_components() %>%
   glimpse()
 ```
@@ -87,6 +103,7 @@ First, read in the sheet, specifying table corners.
 phd_background_components <-
   tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
   process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B7:L277")
+
 ```
 
 Check the orietation of cells and make corrections. 
@@ -98,12 +115,31 @@ phd_background_components <-
   phd_background_components %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
-  change_direction("row_group_03", "WNW")
+  change_direction("row_group_03", "WNW") %>% 
+  change_direction("row_group_04", "WNW")
+
 ```
+
+Check the structure of the table implied by `phd_field_df_components` against the original excel table. If tidyABS has not identified row and column names correctly, the output below will not line up with the original excel table.   
+
+```{r fig.height=6, message=FALSE, warning=FALSE}
+phd_background_components %>% reconstruct_table()  
+```
+
+Using `View()` is useful here:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.width=25}
+magick::image_read("phd_background_components_view.png")
+```
+
 
 Assemble.
 ```{r message=FALSE, warning=FALSE}
 phd_background_df <-
   phd_background_components %>%
   assemble_table_components()
+
+
+phd_background_df %>% glimpse()
+  
 ```

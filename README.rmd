@@ -99,7 +99,7 @@ plot_table_components(ai_processed) +
   ylim(-30, 0)
 ```
 
-Finally, we can assembly the components into a tidy data frame using `assemble_table_components`.
+Finally, we can assemble the components into a tidy data frame using `assemble_table_components`.
 
 ```{r message=FALSE, warning=FALSE}
 assemble_table_components(ai_processed) %>%
