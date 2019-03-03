@@ -1,7 +1,13 @@
 ---
-output: github_document
-editor_options: 
-  chunk_output_type: console
+title: "Tidying excel sheets from The Survey of Earned Doctorates"
+author: "Ian Moran"
+date: "`r Sys.Date()`"
+output: rmarkdown::github_document
+vignette: >
+  %\VignetteIndexEntry{Tidying excel sheets from The Survey of Earned Doctorates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -65,7 +71,7 @@ phd_field_df_components %>% reconstruct_table()
 
 Using `View()` is useful here:
 
-```{r echo=FALSE, message=FALSE, warning=FALSE,fig.width=25}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 magick::image_read("phd_field_df_components_view.png")
 ```
 
@@ -128,7 +134,7 @@ phd_background_components %>% reconstruct_table()
 
 Using `View()` is useful here:
 
-```{r echo=FALSE, message=FALSE, warning=FALSE,fig.width=25}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 magick::image_read("phd_background_components_view.png")
 ```
 
