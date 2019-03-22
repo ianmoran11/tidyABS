@@ -48,7 +48,7 @@ corrections.
 phd_field_df_components %>% plot_table_components()
 ```
 
-![](C:/Users/Ian/Data/r-projects/tidyABS/vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 
@@ -88,7 +88,7 @@ phd_field_df_components %>% reconstruct_table()
 Using `View()` is useful
 here:
 
-![](C:/Users/Ian/Data/r-projects/tidyABS/vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 Assemble.
 
@@ -160,7 +160,7 @@ corrections.
 phd_background_components %>% plot_table_components() + ylim(-30, 0)
 ```
 
-![](C:/Users/Ian/Data/r-projects/tidyABS/vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 
@@ -210,7 +210,7 @@ phd_background_components %>% reconstruct_table()
 Using `View()` is useful
 here:
 
-![](C:/Users/Ian/Data/r-projects/tidyABS/vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](vignettes/US-PhD-data-vignette_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 Assemble.
 

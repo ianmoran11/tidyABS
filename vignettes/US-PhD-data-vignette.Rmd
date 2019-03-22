@@ -1,7 +1,9 @@
 ---
-output: github_document
-editor_options: 
-  chunk_output_type: console
+title: "PhD Data Vignette"
+author: "Ian Moran"
+output:  
+  html_document:  
+    keep_md: true  
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
