@@ -36,11 +36,11 @@ Industry publication (catalogue 8155.0).
 
 tidy_aus_industry_df <-
   tidyABS_example("australian-industry.xlsx") %>%
-  process_ABS_sheet(sheets = "Table_1") %>%
+  process_sheet(sheets = "Table_1") %>%
   assemble_table_components()
 
 tidy_aus_industry_df %>% str()
-#> Classes 'tbl_df', 'tbl' and 'data.frame':    1816 obs. of  8 variables:
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    1668 obs. of  8 variables:
 #>  $ row         : int  8 8 8 8 8 8 8 8 9 9 ...
 #>  $ col         : int  2 3 4 5 6 7 8 9 2 3 ...
 #>  $ comment     : chr  NA NA NA NA ...
@@ -58,11 +58,12 @@ The tidyABS package contains several example files. Use the helper
 
 ``` r
 tidyABS_example()
-#> [1] "australian-industry.xlsx"                            
-#> [2] "consumer-price-index.xlsx"                           
-#> [3] "environmental-economic-accounts.xlsx"                
-#> [4] "PhD_ subfield-citizenship-status-ethnicity-race.xlsx"
-#> [5] "PhD_major-field.xlsx"
+#> [1] "~$australian-industry.xlsx"                          
+#> [2] "australian-industry.xlsx"                            
+#> [3] "consumer-price-index.xlsx"                           
+#> [4] "environmental-economic-accounts.xlsx"                
+#> [5] "PhD_ subfield-citizenship-status-ethnicity-race.xlsx"
+#> [6] "PhD_major-field.xlsx"
 ```
 
 #### Example 1: Australian Industry
@@ -81,13 +82,13 @@ To process the sheet above, we pass the workbook file path to the
 `process_ABS_sheet` function and identify the sheet we’d like to tidy.
 
 ``` r
-ai_processed <- process_ABS_sheet(path = ai_path, sheets = "Table_1")
+ai_processed <- process_sheet(path = ai_path, sheets = "Table_1")
 
 ai_processed %>% str(1)
 #> List of 3
 #>  $ col_groups:Classes 'tbl_df', 'tbl' and 'data.frame':  2 obs. of  10 variables:
 #>  $ row_groups:Classes 'tbl_df', 'tbl' and 'data.frame':  2 obs. of  11 variables:
-#>  $ tabledata :Classes 'tbl_df', 'tbl' and 'data.frame':  1816 obs. of  4 variables:
+#>  $ tabledata :Classes 'tbl_df', 'tbl' and 'data.frame':  1668 obs. of  4 variables:
 ```
 
 This produces a list of three data frames. They store the location and
@@ -160,13 +161,13 @@ plot_table_components(ai_processed) +
 
 ![](README-unnamed-chunk-11-1.png)<!-- -->
 
-Finally, we can assembly the components into a tidy data frame using
+Finally, we can assemble the components into a tidy data frame using
 `assemble_table_components`.
 
 ``` r
 assemble_table_components(ai_processed) %>%
   glimpse()
-#> Observations: 1,816
+#> Observations: 1,668
 #> Variables: 8
 #> $ row          <int> 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 1...
 #> $ col          <int> 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5, 6, 7, 8, 9, 2...
@@ -189,7 +190,7 @@ workbook and proces `Table 6.1`:
 ``` r
 eea_path <- tidyABS_example("environmental-economic-accounts.xlsx")
 
-eea_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
+eea_processed <- process_sheet(path = eea_path, sheets = "Table 6.1")
 ```
 
 On visual inspection, we can see `row_group_01` has been given a “W”
@@ -260,7 +261,7 @@ addresses, identifying the inner corners of the table.
 
 ``` r
 cpi_processed <-
-  process_ABS_sheet(
+  process_sheet(
     path = cpi_path, sheets = "Data1",
     manual_value_references = "B11:AB292"
   )

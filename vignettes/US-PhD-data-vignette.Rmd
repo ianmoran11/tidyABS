@@ -1,23 +1,18 @@
+    
 ---
 title: "Tidying excel sheets from The Survey of Earned Doctorates"
-author: "Ian Moran"
-date: "`r Sys.Date()`"
-output: rmarkdown::github_document
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Tidying excel sheets from The Survey of Earned Doctorates}
+  %\VignetteIndexEntry{Extending ggplot2}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 7, fig.align = "center")
+library(ggplot2)
 ```
+
 
 ```{r options, message=FALSE, warning=FALSE, include=FALSE}
 library(magick)
@@ -35,7 +30,7 @@ Here are a couple of examples using tidyABS on a non-ABS excel table.
 Here's a mininal example.
 ```{r message=FALSE, warning=FALSE}
 tidyABS_example("PhD_major-field.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B6:O50") %>%
+  process_sheet(path = ., sheets = 1, manual_value_references = "B6:O50") %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
   assemble_table_components() %>%
@@ -49,7 +44,7 @@ First, read in the sheet, specifying table corners.
 ```{r message=FALSE, warning=FALSE}
 phd_field_df_components <-
   tidyABS_example("PhD_major-field.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B6:O50")
+  process_sheet(path = ., sheets = 1, manual_value_references = "B6:O50")
 ```
 
 Check the orietation of cells and make corrections. 
@@ -92,7 +87,7 @@ phd_field_df %>% glimpse()
 Here's a mininal example.
 ```{r message=FALSE, warning=FALSE}
 tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B7:L277") %>%
+  process_sheet(path = ., sheets = 1, manual_value_references = "B7:L277") %>%
   change_direction("row_group_01", "WNW") %>%
   change_direction("row_group_02", "WNW") %>%
   change_direction("row_group_03", "WNW") %>%
@@ -108,7 +103,7 @@ First, read in the sheet, specifying table corners.
 ```{r message=FALSE, warning=FALSE}
 phd_background_components <-
   tidyABS_example("PhD_ subfield-citizenship-status-ethnicity-race.xlsx") %>%
-  process_ABS_sheet(path = ., sheets = 1, manual_value_references = "B7:L277")
+  process_sheet(path = ., sheets = 1, manual_value_references = "B7:L277")
 
 ```
 
