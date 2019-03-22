@@ -1,18 +1,23 @@
-    
 ---
 title: "Tidying excel sheets from The Survey of Earned Doctorates"
-output: rmarkdown::md_document
+author: "Ian Moran"
+date: "`r Sys.Date()`"
+output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{Extending ggplot2}
+  %\VignetteIndexEntry{Tidying excel sheets from The Survey of Earned Doctorates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 7, fig.align = "center")
-library(ggplot2)
-```
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 ```{r options, message=FALSE, warning=FALSE, include=FALSE}
 library(magick)
