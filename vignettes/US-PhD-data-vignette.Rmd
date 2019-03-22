@@ -1,7 +1,7 @@
     
 ---
 title: "Tidying excel sheets from The Survey of Earned Doctorates"
-output: rmarkdown::html_vignette
+output: rmarkdown::md_document
 vignette: >
   %\VignetteIndexEntry{Extending ggplot2}
   %\VignetteEngine{knitr::rmarkdown}
