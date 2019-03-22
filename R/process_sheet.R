@@ -15,6 +15,13 @@
 process_sheet <-
   function(path, sheets, manual_value_references = NULL, added_row_groups = NULL, keep_meta_data = FALSE) {
 
+      if (!is.null(manual_value_references)) {
+        if (!tidyxl::is_range(manual_value_references)) {
+          stop("manual_value_references must be a range")
+        }
+      }
+
+
     sheet <- tidyxl::xlsx_cells(path = path, sheets = sheets)
     formats <- tidyxl::xlsx_formats(path)
 

@@ -26,6 +26,13 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
       col < value_ref$min_col
     )
 
+  if(nrow(row_name_df) == 0){
+    stop("No row groups have been detected. If you haven't already, try using the 'manual_value_references` argument")
+  }
+
+
+
+
   # Get row name cell format information
   row_name_df <-
     row_name_df %>%

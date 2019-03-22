@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The tidyABS package converts ABS excel tables to tidy data frames. It uses rules-of-thumb to determine the structure of excel tables, however it sometimes requires pointers from the user. 
+The tidyABS package converts ABS excel tables to tidy data frames. It uses information on cells' formatting (indenting, bolding, italics) and some rules-of-thumb to detect the structure of excel tables. It sometimes needs pointers from the user. 
 
 
 _Note: tidyABS works with .xlsx files only._

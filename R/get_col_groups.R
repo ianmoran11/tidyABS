@@ -23,6 +23,13 @@ get_col_groups <- function(sheet, value_ref, formats) {
     filter(row < value_ref$min_row) %>%
     mutate(row_temp = row)
 
+
+  if(nrow(col_df) == 0){
+    stop("No column groups have been detected. If you haven't already, try using the 'manual_value_references` argument")
+  }
+
+
+
   # Get format information
   col_df <-
     col_df %>%
@@ -55,10 +62,10 @@ get_col_groups <- function(sheet, value_ref, formats) {
   col_df <-
     col_df %>%
       mutate(row_no_name = row_temp - min(row_temp) + 1) %>%
-      mutate(col_group = paste0("col_group_", str_pad(row_number(), 2, side = "left", "0"))) %>%
+      mutate(col_group = paste0("col_group_", str_pad(row_number(), 2, side = "left", "0")))
 
       # Create and name columns
-      col_df() <-
+    col_df <-
     col_df %>%
     mutate(data = map2(
       data, col_group,

@@ -19,7 +19,6 @@ get_meta_df <- function(sheet, value_ref, col_groups, formats) {
   # value_ref <- master_df_01$value_ref[[100]]
   # formats <- master_df_01$formats[[100]]
   # col_groups <- master_df_01$col_groups[[100]]
-
   # Get cells
   meta_df <-
     sheet %>%
@@ -81,7 +80,7 @@ get_meta_df <- function(sheet, value_ref, col_groups, formats) {
   # Set direction
   meta_df <-
     meta_df %>%
-    mutate(direction = "WNW") %>%
+    mutate(direction = "WNW")
 
     # Add information
     meta_df %>%
