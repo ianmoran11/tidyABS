@@ -13,13 +13,19 @@
 
 get_col_groups <- function(sheet, value_ref, formats) {
 
+
+  # Get column cells
   col_df <-
     sheet %>%
     filter(!is_blank) %>%
     filter(col <= value_ref$max_col) %>%
     filter(col >= value_ref$min_col) %>%
     filter(row < value_ref$min_row) %>%
-    mutate(row_temp = row) %>%
+    mutate(row_temp = row)
+
+  # Get format information
+  col_df <-
+    col_df %>%
     mutate(indent = local_format_id %>%
       map_int(possibly({
         ~ formats$local$alignment[["indent"]][[.x]]
@@ -34,14 +40,26 @@ get_col_groups <- function(sheet, value_ref, formats) {
       map_lgl(possibly({
         ~ formats$local$font[["italic"]][[.x]]
       }, F)) %>%
-      unlist()) %>%
+      unlist())
+
+  # Nest column groups
+  col_df <-
+    col_df %>%
     group_by(row_temp, indent, bold, italic) %>%
     mutate(merged = ifelse(sum(merged, na.rm = TRUE) == length(merged), T, F)) %>%
     filter(merged != T) %>%
     nest() %>%
-    ungroup() %>%
-    mutate(row_no_name = row_temp - min(row_temp) + 1) %>%
-    mutate(col_group = paste0("col_group_", str_pad(row_number(), 2, side = "left", "0"))) %>%
+    ungroup()
+
+  # Name column groups
+  col_df <-
+    col_df %>%
+      mutate(row_no_name = row_temp - min(row_temp) + 1) %>%
+      mutate(col_group = paste0("col_group_", str_pad(row_number(), 2, side = "left", "0"))) %>%
+
+      # Create and name columns
+      col_df() <-
+    col_df %>%
     mutate(data = map2(
       data, col_group,
       function(data, col_group) {
@@ -56,11 +74,16 @@ get_col_groups <- function(sheet, value_ref, formats) {
         temp_df[[col_group]] <- temp_df$value
         temp_df %>% select(-value)
       }
-    )) %>%
+    ))
+
+  # Set direction
+  col_df <-
+    col_df %>%
     mutate(direction = "N") %>%
     dplyr::select(col_group, direction, data, indent, bold, italic)
 
 
+  # Add information to output df
   col_df %>%
     mutate(data_summary = data %>%
       map(~ .x %>% summarise(

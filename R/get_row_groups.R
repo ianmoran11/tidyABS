@@ -16,6 +16,7 @@
 get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_groups) {
 
 
+  # Get row name cells
   row_name_df <-
     sheet %>%
     filter(
@@ -23,7 +24,11 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
       row <= value_ref$max_row,
       row > max(col_groups$max_row),
       col < value_ref$min_col
-    ) %>%
+    )
+
+  # Get row name cell format information
+  row_name_df <-
+    row_name_df %>%
     mutate(col_temp = col) %>%
     mutate(indent = local_format_id %>%
       map_int(possibly({
@@ -41,7 +46,7 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
       }, F)) %>%
       unlist())
 
-
+  # Add manually identified row groups
   if (!is.null(added_row_groups)) {
     added_row_df <-
       tibble(address = added_row_groups) %>%
@@ -61,14 +66,22 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
       mutate(added_group_no = NA)
   }
 
-
+  # Nest row groups
   row_name_df <-
     row_name_df %>%
     group_by(col_temp, indent, bold, italic, added_group_no) %>%
     nest() %>%
-    ungroup() %>%
+    ungroup()
+
+  # Name row groups
+  row_name_df <-
+    row_name_df %>%
     arrange(col_temp, indent, italic, bold) %>%
-    mutate(row_group = paste0("row_group_", str_pad(row_number(), 2, side = "left", "0"))) %>%
+    mutate(row_group = paste0("row_group_", str_pad(row_number(), 2, side = "left", "0")))
+
+  # Set row_group varnames and set values
+  row_name_df <-
+    row_name_df %>%
     mutate(data = map2(
       data, row_group,
       function(data, row_group) {
@@ -87,15 +100,21 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
       }
     ))
 
-
+  # check whether there are values in the rows
   row_name_df <-
     row_name_df %>%
     mutate(row_sum = map_dbl(data, ~ get_row_sum(data = .x, sheet = sheet)))
 
-
-  row_name_df %>%
+  # Set directions
+  row_name_df <-
+    row_name_df %>%
     mutate(direction = ifelse(row_sum == 0, "WNW", "W")) %>%
-    dplyr::select(row_group, direction, data, indent, bold, italic, added_group_no) %>%
+    dplyr::select(row_group, direction, data, indent, bold, italic, added_group_no)
+
+
+
+  # Add additional information
+  row_name_df %>%
     mutate(data_summary = data %>%
       map(~ .x %>% summarise(
         min_col = min(col, na.rm = T), max_col = max(col, na.rm = T),

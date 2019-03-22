@@ -20,12 +20,19 @@ get_meta_df <- function(sheet, value_ref, col_groups, formats) {
   # formats <- master_df_01$formats[[100]]
   # col_groups <- master_df_01$col_groups[[100]]
 
-  sheet %>%
+  # Get cells
+  meta_df <-
+    sheet %>%
     filter(
       !is_blank,
       row <= max(col_groups$max_row),
       col < value_ref$min_col
-    ) %>%
+    )
+
+
+  # Get cell format information
+  meta_df <-
+    meta_df %>%
     mutate(col_temp = col) %>%
     mutate(row_temp = row) %>%
     mutate(indent = local_format_id %>%
@@ -42,7 +49,12 @@ get_meta_df <- function(sheet, value_ref, col_groups, formats) {
       map_lgl(possibly({
         ~ formats$local$font[["italic"]][[.x]]
       }, F)) %>%
-      unlist()) %>%
+      unlist())
+
+
+  # Name columns
+  meta_df <-
+    meta_df %>%
     group_by(col_temp, row_temp, indent, bold, italic) %>%
     nest() %>%
     ungroup() %>%
@@ -63,8 +75,16 @@ get_meta_df <- function(sheet, value_ref, col_groups, formats) {
         temp_df[[meta_data]] <- temp_df$character
         temp_df %>% select(-character)
       }
-    )) %>%
+    ))
+
+
+  # Set direction
+  meta_df <-
+    meta_df %>%
     mutate(direction = "WNW") %>%
+
+    # Add information
+    meta_df %>%
     dplyr::select(meta_data, direction, data, indent, bold, italic) %>%
     mutate(data_summary = data %>%
       map(~ .x %>% summarise(
