@@ -6,9 +6,10 @@ experimentation only.**
 
 ## Overview
 
-The tidyABS package converts ABS excel tables to tidy data frames. It
-uses rules-of-thumb to determine the structure of excel tables, however
-it sometimes requires pointers from the user.
+The `tidyABS` package converts ABS excel tables to tidy data frames. It
+uses information on cells’ formatting (indenting, bolding, italics) and
+some rules-of-thumb to detect the structure of excel tables. It
+sometimes needs pointers from the user.
 
 *Note: tidyABS works with .xlsx files only.*
 
@@ -30,7 +31,7 @@ library(tidyverse)
 ```
 
 Below is a short demonstration that tidies a table from the Australian
-Industry publication (catalogue 8155.0).
+Industry publication (Cat No. 8155.0).
 
 ``` r
 
@@ -70,8 +71,8 @@ tidyABS_example()
 
 ![](README-unnamed-chunk-7-1.png)<!-- -->
 
-Above is the first sheet of an excel workbook from the Australian
-Industry publication. We can retrieve the path of this file using the
+Above is the first sheet of an excel workbook in the Australian Industry
+publication. We can retrieve the path of this file using the
 `tidyABS_example` function:
 
 ``` r
@@ -79,7 +80,7 @@ ai_path <- tidyABS_example("australian-industry.xlsx")
 ```
 
 To process the sheet above, we pass the workbook file path to the
-`process_ABS_sheet` function and identify the sheet we’d like to tidy.
+`process_sheet` function and identify the sheet we’d like to tidy.
 
 ``` r
 ai_processed <- process_sheet(path = ai_path, sheets = "Table_1")
@@ -146,13 +147,12 @@ inspect_table_components(ai_processed)
 #> list()
 ```
 
-We can also visualize how these groups are spatially layed out in the
-spreadsheet and how tidyABS will relate them to table values with the
-function `plot_table_components`. Row names directly to the left of
-their data points should be labelled “W”, and column names directly
-above should be labelled “N”. (See the
-[unpivotr](https://github.com/nacnudus/unpivotr) package for more
-information.)
+We can use `plot_table_components` to visualize how these groups are
+spatially layed out in the spreadsheet and see how `tidyABS` will relate
+them to table values. Row names directly to the left of their data
+points should be labelled “W”, and column names directly above should be
+labelled “N”. (See the [unpivotr](https://github.com/nacnudus/unpivotr)
+package for more information.)
 
 ``` r
 plot_table_components(ai_processed) +
@@ -241,7 +241,7 @@ assemble_table_components(eea_processed) %>%
 ![](README-unnamed-chunk-19-1.png)<!-- -->
 
 Time series data require the user to manually identify the inner table
-cells. This is because some of the column names are numberic — for
+cells. This is because some of the column names are numeric — for
 example, collection month.
 
 I recommend using the
