@@ -14,7 +14,7 @@ get_tabledata <- function(sheet, value_ref) {
 
   sheet %>%
     filter(
-      !is_blank & is.na(comment),
+      !is_blank | !is.na(comment),
       row <= value_ref$max_row,
       row >= value_ref$min_row,
       col <= value_ref$max_col,

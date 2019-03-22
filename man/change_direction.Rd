@@ -3,12 +3,12 @@
 \name{change_direction}
 \alias{change_direction}
 \title{Change direction
-Changes the direction associated with a col_group/row_group in a \code{process_ABS_sheet}}
+The function changes the direction associated with a col_group/row_group in a processed_sheet - the output of \code{process_sheet}.}
 \usage{
-change_direction(processed_ABS_sheet, group, new_direction)
+change_direction(processed_sheet, group, new_direction)
 }
 \arguments{
-\item{processed_ABS_sheet}{returned by process_ABS_sheet}
+\item{processed_sheet}{returned by process_sheet}
 
 \item{group}{row_group name / col_group name}
 
@@ -20,5 +20,5 @@ change_direction(processed_ABS_sheet, group, new_direction)
 }
 \description{
 Change direction
-Changes the direction associated with a col_group/row_group in a \code{process_ABS_sheet}
+The function changes the direction associated with a col_group/row_group in a processed_sheet - the output of \code{process_sheet}.
 }

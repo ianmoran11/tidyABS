@@ -7,8 +7,14 @@
 create_tidytable(col_groups, row_groups, meta_df, tabledata)
 }
 \arguments{
-\item{tabledata}{}
+\item{col_groups}{output of \code{process_sheet}}
+
+\item{row_groups}{output of \code{process_sheet}}
+
+\item{meta_df}{output of \code{process_sheet}}
+
+\item{tabledata}{output of \code{process_sheet}}
 }
 \description{
-Reshapes the data using unpivotr functions (which are specified in the head dataframes)
+This is a utility function that reshapes the data using unpivotr functions (which are specified in the head dataframes)
 }

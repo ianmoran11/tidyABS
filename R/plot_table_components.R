@@ -7,10 +7,10 @@
 #' @export
 
 
-plot_table_components <- function(abs_sheet_processed) {
-  if (length(abs_sheet_processed) == 4) {
+plot_table_components <- function(processed_sheet) {
+  if (length(processed_sheet) == 4) {
     temp <-
-      abs_sheet_processed %>%
+      processed_sheet %>%
       .[1:3] %>%
       map(~ .x %>% dplyr::select(type = 1, direction, data)) %>%
       bind_rows() %>%
@@ -22,10 +22,10 @@ plot_table_components <- function(abs_sheet_processed) {
       temp %>%
       mutate(value = coalesce(!!!syms(value_cols))) %>%
       select(type, direction, row, col, value) %>%
-      bind_rows(abs_sheet_processed[[4]] %>% mutate(type = "data"))
+      bind_rows(processed_sheet[[4]] %>% mutate(type = "data"))
   } else {
     temp <-
-      abs_sheet_processed %>%
+      processed_sheet %>%
       .[1:2] %>%
       map(~ .x %>% dplyr::select(type = 1, direction, data)) %>%
       bind_rows() %>%
@@ -37,7 +37,7 @@ plot_table_components <- function(abs_sheet_processed) {
       temp %>%
       mutate(value = coalesce(!!!syms(value_cols))) %>%
       select(type, direction, row, col, value) %>%
-      bind_rows(abs_sheet_processed[[3]] %>% mutate(type = "data"))
+      bind_rows(processed_sheet[[3]] %>% mutate(type = "data"))
   }
 
 

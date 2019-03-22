@@ -7,12 +7,12 @@
 enhead_tabledata(header_data, direction, values = tabledata)
 }
 \arguments{
-\item{header_data}{path to .xlsx file}
+\item{header_data}{cells representing headers}
 
-\item{direction}{sheet nominated for tidying}
+\item{direction}{orietations of heades with respect to value cells.}
 
-\item{values}{sheet nominated for tidying}
+\item{values}{centre components of the table, representing values}
 }
 \description{
-Reshapes the data using unpivotr functions (which are specified in the head dataframes)
+This is a utility function that reshapes the data using unpivotr functions (which are specified in the head dataframes)
 }

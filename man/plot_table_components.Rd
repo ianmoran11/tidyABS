@@ -4,7 +4,7 @@
 \alias{plot_table_components}
 \title{Plot table components}
 \usage{
-plot_table_components(abs_sheet_processed)
+plot_table_components(processed_sheet)
 }
 \arguments{
 \item{abs_sheet_processed}{path to .xlsx file}

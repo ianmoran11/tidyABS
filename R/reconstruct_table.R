@@ -1,8 +1,8 @@
 #' reconstruct_table
 #'
-#' Reconstructs the table components to structure of oringinal excel file.
+#' This function reconstructs the table components from `process_sheet` to structure of oringinal excel file.
 #'
-#' @param table_components object returned by `process_ABS_sheet`
+#' @param table_components object returned by `process_sheet`
 #'
 #' @export
 

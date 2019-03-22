@@ -12,5 +12,5 @@ get_indent(local_format_id, formats)
 \item{formats}{sheet object read in by \code{tidyxl::xlsx_formats}}
 }
 \description{
-Return the level of indenting of a specified cell.
+This function returns the level of indenting of a specified cell.
 }

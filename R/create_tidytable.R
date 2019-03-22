@@ -1,13 +1,12 @@
 
 #' create_tidytable
 #'
-#' Reshapes the data using unpivotr functions (which are specified in the head dataframes)
-#' @param col_groups
-#' @param row_groups
-#' @param meta_df
-#' @param tabledata
+#' This is a utility function that reshapes the data using unpivotr functions (which are specified in the head dataframes)
+#' @param col_groups output of `process_sheet`
+#' @param row_groups output of `process_sheet`
+#' @param meta_df output of `process_sheet`
+#' @param tabledata output of `process_sheet`
 #'
-#' @export
 
 
 create_tidytable <- function(col_groups, row_groups, meta_df, tabledata) {

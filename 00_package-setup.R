@@ -35,4 +35,6 @@ usethis::use_package("tidyverse", type = "Imports")
 usethis::use_package("cellranger", type = "Imports")
 
 devtools::install()
+devtools::document()
+
 

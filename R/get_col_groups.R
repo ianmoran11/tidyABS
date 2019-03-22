@@ -1,4 +1,4 @@
-#' Get table references
+#' Get column groups
 #'
 #' This function:
 #'          1. Identifies which cells are likely to be headers

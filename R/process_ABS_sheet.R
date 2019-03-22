@@ -1,13 +1,14 @@
 #' get tidyABS components
 #'
-#' Produces the various tidyABS compentents
+#' Produces the various tidyABS table components
 #' @param path path to .xlsx file
 #' @param sheets sheet nominated for tidying
 #'
 #' @export
 
-process_ABS_sheet <-
+process_sheet <-
   function(path, sheets, manual_value_references = NULL, added_row_groups = NULL, keep_meta_data = FALSE) {
+
     sheet <- tidyxl::xlsx_cells(path = path, sheets = sheets)
     formats <- tidyxl::xlsx_formats(path)
 

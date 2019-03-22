@@ -7,8 +7,8 @@
 check_low_col_names(col_groups)
 }
 \arguments{
-\item{table_componsents}{}
+\item{col_groups}{groups cells identified as referring to the same category.}
 }
 \description{
-Checks whether merging of a row label is leading to dupplicates in col and row labels.
+This is a utility function that checks whether merging of a row label is leading to dupplicates in col and row labels.
 }

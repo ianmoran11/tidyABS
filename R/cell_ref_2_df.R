@@ -1,7 +1,7 @@
 
 #' Convert an adress to row/col tibble
 #'
-#' Convert an adress reference to a tibble identifying row and col
+#' This function converts an adress reference to a tibble identifying row and column numbers.
 #'
 #' @param cell_ref Cell reference in address format - e.g. "A1"
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_col_groups.R
 \name{get_col_groups}
 \alias{get_col_groups}
-\title{Get table references}
+\title{Get column groups}
 \usage{
 get_col_groups(sheet, value_ref, formats)
 }

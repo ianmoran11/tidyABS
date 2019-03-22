@@ -4,11 +4,11 @@
 \alias{inspect_table_components}
 \title{Inspect table components}
 \usage{
-inspect_table_components(abs_sheet_processed)
+inspect_table_components(processed_sheet)
 }
 \arguments{
-\item{abs_sheet_processed}{path to .xlsx file}
+\item{process_sheet}{path to .xlsx file}
 }
 \description{
-Produces the various tidyABS compentents
+This function produces the various tidyABS components.
 }
