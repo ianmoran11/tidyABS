@@ -1,8 +1,14 @@
 
 #' assemble_table_components
 #'
-#' Reshapes the data using unpivotr functions (which are specified in the head dataframes)
-#' @param table_componsents
+#' Reshapes the table components to create a tidy data frame.
+#' @param table_components produced by `process_sheet`
+#'
+#' @examples
+#'
+#'  \donttest{tidyABS_example("australian-industry.xlsx") %>% process_sheet(sheets = "Table_1") %>% assemble_table_components()  }
+#'
+#'
 #'
 #' @export
 

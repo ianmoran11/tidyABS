@@ -5,7 +5,6 @@
 #'
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #'
-#' @export
 
 
 fill_in_blanks <- function(sheet) {

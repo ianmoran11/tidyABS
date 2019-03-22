@@ -4,6 +4,14 @@
 #'
 #' @param table_components object returned by `process_sheet`
 #'
+#' @examples
+#'
+#'  \donttest{tidyABS_example("australian-industry.xlsx") %>% process_sheet(sheets = "Table_1") %>% reconstruct_table() }
+#'
+#'
+#'
+#'
+#'
 #' @export
 
 

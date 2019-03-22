@@ -12,3 +12,12 @@ reconstruct_table(table_components)
 \description{
 This function reconstructs the table components from \code{process_sheet} to structure of oringinal excel file.
 }
+\examples{
+
+ \donttest{tidyABS_example("australian-industry.xlsx") \%>\% process_sheet(sheets = "Table_1") \%>\% reconstruct_table() }
+
+
+
+
+
+}

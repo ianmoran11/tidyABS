@@ -1,6 +1,8 @@
 library(devtools)
 library(tidyverse)
+devtools::document()
 devtools::install()
+
 13
 library(tidyABS)
 
@@ -8,7 +10,7 @@ library(tidyABS)
 
 tidyABS_example("australian-industry.xlsx") %>%
   process_sheet(sheets = "Table_1") %>%
-  reconstruct_table() %>% View
+  reconstruct_table()
 
 tidyABS_example("australian-industry.xlsx")
 

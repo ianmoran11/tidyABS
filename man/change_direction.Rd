@@ -22,3 +22,12 @@ change_direction(processed_sheet, group, new_direction)
 Change direction
 The function changes the direction associated with a col_group/row_group in a processed_sheet - the output of \code{process_sheet}.
 }
+\examples{
+
+ \donttest{tidyABS_example("environmental-economic-accounts.xlsx") \%>\%  process_sheet( sheets = "Table 6.1") \%>\% change_direction("row_group_01", "WNW") }
+
+
+
+
+
+}

@@ -50,7 +50,7 @@ Below is a short demonstration that tidies a table from the Australian Industry 
 
 tidy_aus_industry_df <-
   tidyABS_example("australian-industry.xlsx") %>%
-  process_ABS_sheet(sheets = "Table_1") %>%
+  process_sheet(sheets = "Table_1") %>%
   assemble_table_components()
 
 tidy_aus_industry_df %>% str()
@@ -79,7 +79,7 @@ ai_path <- tidyABS_example("australian-industry.xlsx")
 To process the sheet above, we pass the workbook file path to the `process_ABS_sheet` function and identify the sheet we'd like to tidy. 
 
 ```{r message=FALSE, warning=FALSE}
-ai_processed <- process_ABS_sheet(path = ai_path, sheets = "Table_1")
+ai_processed <- process_sheet(path = ai_path, sheets = "Table_1")
 
 ai_processed %>% str(1)
 ```
@@ -117,7 +117,7 @@ Here's an example that requires some manual work, the Environmental-Economic Acc
 ```{r message=FALSE, warning=FALSE}
 eea_path <- tidyABS_example("environmental-economic-accounts.xlsx")
 
-eea_processed <- process_ABS_sheet(path = eea_path, sheets = "Table 6.1")
+eea_processed <- process_sheet(path = eea_path, sheets = "Table 6.1")
 ```
 
 On visual inspection, we can see `row_group_01` has been given a "W" orientation to the data, not "WNW". 
@@ -167,7 +167,7 @@ We need to identify the inner table cells using the `manual_value_references` ar
 
 ```{r message=FALSE, warning=FALSE}
 cpi_processed <-
-  process_ABS_sheet(
+  process_sheet(
     path = cpi_path, sheets = "Data1",
     manual_value_references = "B11:AB292"
   )

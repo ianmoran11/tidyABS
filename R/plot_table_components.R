@@ -1,8 +1,13 @@
 
 #' Plot table components
 #'
-#' Produces the various tidyABS compentents
-#' @param abs_sheet_processed path to .xlsx file
+#' This function plots the excel sheet, highlighting the relationship between headers and table values.
+#' @param processed_sheet returned by `process_sheet`
+#'
+#' @examples
+#'
+#'  \donttest{tidyABS_example("australian-industry.xlsx") %>% process_sheet(sheets = "Table_1") %>% plot_table_components() }
+#'
 #'
 #' @export
 

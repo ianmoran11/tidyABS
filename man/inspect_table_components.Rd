@@ -12,3 +12,8 @@ inspect_table_components(processed_sheet)
 \description{
 This function produces the various tidyABS components.
 }
+\examples{
+
+ \donttest{tidyABS_example("australian-industry.xlsx") \%>\% process_sheet(sheets = "Table_1") \%>\% inspect_table_components() }
+
+}

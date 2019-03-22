@@ -5,7 +5,7 @@
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param manual_value_references sheet object read in by `tidyxl::xlsx_cells`
 #'
-#' @export
+
 
 get_value_references <- function(sheet, manual_value_references) {
 

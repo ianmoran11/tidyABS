@@ -7,7 +7,17 @@
 #' @param col_groups format object read in by `tidyxl::xlsx_cells`
 #' @param added_row_groups format object read in by `tidyxl::xlsx_cells`
 #'
+#' @examples
+#'
+#'  \donttest{tidyABS_example("environmental-economic-accounts.xlsx") %>%  process_sheet( sheets = "Table 6.1") %>% change_direction("row_group_01", "WNW") }
+#'
+#'
+#'
+#'
+#'
 #' @export
+
+
 
 
 

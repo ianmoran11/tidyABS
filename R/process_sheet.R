@@ -1,8 +1,14 @@
 #' get tidyABS components
 #'
-#' Produces the various tidyABS table components
+#' Produces the  tidyABS table components, which store information on column groups, row groups and tabledata.
 #' @param path path to .xlsx file
 #' @param sheets sheet nominated for tidying
+#'
+#' @examples
+#'
+#'  \donttest{tidyABS_example("australian-industry.xlsx") %>% process_sheet(sheets = "Table_1")  }
+#'
+#'
 #'
 #' @export
 

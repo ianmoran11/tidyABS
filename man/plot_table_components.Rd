@@ -7,8 +7,14 @@
 plot_table_components(processed_sheet)
 }
 \arguments{
-\item{abs_sheet_processed}{path to .xlsx file}
+\item{processed_sheet}{returned by \code{process_sheet}}
 }
 \description{
-Produces the various tidyABS compentents
+This function plots the excel sheet, highlighting the relationship between headers and table values.
+}
+\examples{
+
+ \donttest{tidyABS_example("australian-industry.xlsx") \%>\% process_sheet(sheets = "Table_1") \%>\% plot_table_components() }
+
+
 }

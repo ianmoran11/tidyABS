@@ -6,7 +6,6 @@
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
 #'
-#' @export
 
 
 get_tabledata <- function(sheet, value_ref) {
