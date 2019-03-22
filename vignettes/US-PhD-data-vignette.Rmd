@@ -1,13 +1,7 @@
 ---
-title: "Tidying excel sheets from The Survey of Earned Doctorates"
-author: "Ian Moran"
-date: "`r Sys.Date()`"
-output: rmarkdown::github_document
-vignette: >
-  %\VignetteIndexEntry{Tidying excel sheets from The Survey of Earned Doctorates}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-
+output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -18,6 +12,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
 
 ```{r options, message=FALSE, warning=FALSE, include=FALSE}
 library(magick)

@@ -1,7 +1,3 @@
-Tidying excel sheets from The Survey of Earned Doctorates
-================
-Ian Moran
-2019-03-23
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
