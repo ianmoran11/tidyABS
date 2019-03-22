@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The tidyABS package converts ABS excel tables to tidy data frames. It uses information on cells' formatting (indenting, bolding, italics) and some rules-of-thumb to detect the structure of excel tables. It sometimes needs pointers from the user. 
+The `tidyABS` package converts ABS excel tables to tidy data frames. It uses information on cells' formatting (indenting, bolding, italics) and some rules-of-thumb to detect the structure of excel tables. It sometimes needs pointers from the user. 
 
 
 _Note: tidyABS works with .xlsx files only._
@@ -45,7 +45,7 @@ library(tidyABS)
 library(tidyverse)
 ```
 
-Below is a short demonstration that tidies a table from the Australian Industry publication (catalogue 8155.0). 
+Below is a short demonstration that tidies a table from the Australian Industry publication (Cat No. 8155.0). 
 ```{r message=FALSE, warning=FALSE}
 
 tidy_aus_industry_df <-
@@ -59,7 +59,6 @@ tidy_aus_industry_df %>% str()
 ### Examples
 
 The tidyABS package contains several example files. Use the helper `tidyABS_example()` function with no arguments to list these files:
-
 ```{r message=FALSE, warning=FALSE}
 tidyABS_example()
 ```
@@ -70,13 +69,13 @@ tidyABS_example()
 magick::image_read("australian-industry_table-1.png")
 ```
 
-Above is the  first sheet of an excel workbook from the Australian Industry publication. We can retrieve the path of this file  using the `tidyABS_example` function:
+Above is the  first sheet of an excel workbook in the Australian Industry publication. We can retrieve the path of this file  using the `tidyABS_example` function:
 
 ```{r message=FALSE, warning=FALSE}
 ai_path <- tidyABS_example("australian-industry.xlsx")
 ```
 
-To process the sheet above, we pass the workbook file path to the `process_ABS_sheet` function and identify the sheet we'd like to tidy. 
+To process the sheet above, we pass the workbook file path to the `process_sheet` function and identify the sheet we'd like to tidy. 
 
 ```{r message=FALSE, warning=FALSE}
 ai_processed <- process_sheet(path = ai_path, sheets = "Table_1")
@@ -92,7 +91,7 @@ We can inspect the row and column names in  `ai_processed` using the `inspect_ta
 inspect_table_components(ai_processed)
 ```
 
-We can also visualize how these groups are spatially layed out in the spreadsheet and how tidyABS will relate them to table values with the function `plot_table_components`. Row names directly to the left of their data points should be labelled "W", and column names directly above should be labelled "N". (See the [unpivotr](https://github.com/nacnudus/unpivotr) package for more information.)
+We can use `plot_table_components` to  visualize how these groups are spatially layed out in the spreadsheet and see how `tidyABS` will relate them to table values. Row names directly to the left of their data points should be labelled "W", and column names directly above should be labelled "N". (See the [unpivotr](https://github.com/nacnudus/unpivotr) package for more information.)
 
 ```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
 plot_table_components(ai_processed) +
@@ -153,7 +152,7 @@ assemble_table_components(eea_processed) %>%
 magick::image_read("consumer-price-index_data01.png")
 ```
 
-Time series data require the user to manually identify the inner table cells. This is because some of the column names are numberic --- for example, collection month. 
+Time series data require the user to manually identify the inner table cells. This is because some of the column names are numeric --- for example, collection month. 
 
 I recommend using the [`readABS`](https://github.com/MattCowgill/readabs) package for this. It was created for importing ABS time series data and does not require manual identifcation of table cells. 
 
