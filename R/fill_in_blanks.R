@@ -9,7 +9,7 @@
 
 
 fill_in_blanks <- function(sheet) {
-  1
+
   # Define blank cells
   blank_df <-
     sheet %>%
