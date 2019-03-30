@@ -26,7 +26,7 @@ use_data()
 
 usethis::use_package("tidyxl", type = "Imports")
 usethis::use_package("unpivotr", type = "Imports")
-usethis::use_package("magrittr", type = "Imports")
+usethis::use_package("magrittr", type = "Depends")
 usethis::use_package("dplyr", type = "Imports")
 usethis::use_package("purrr", type = "Imports")
 usethis::use_package("stringi", type = "Imports")

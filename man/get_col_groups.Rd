@@ -4,7 +4,8 @@
 \alias{get_col_groups}
 \title{Get column groups}
 \usage{
-get_col_groups(sheet, value_ref, formats)
+get_col_groups(sheet, value_ref, formats, ignore_bolding = FALSE,
+  ignore_indenting = FALSE, ignore_italics = FALSE)
 }
 \arguments{
 \item{sheet}{sheet object read in by \code{tidyxl::xlsx_cells}}

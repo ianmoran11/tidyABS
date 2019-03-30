@@ -4,7 +4,9 @@
 \alias{get_row_groups}
 \title{Get Rowname DF}
 \usage{
-get_row_groups(sheet, value_ref, col_groups, formats, added_row_groups)
+get_row_groups(sheet, value_ref, col_groups, formats, added_row_groups,
+  ignore_bolding = FALSE, ignore_indenting = FALSE,
+  ignore_italics = FALSE)
 }
 \arguments{
 \item{sheet}{sheet object read in by \code{tidyxl::xlsx_cells}}

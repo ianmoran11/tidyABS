@@ -12,30 +12,21 @@
 #'
 #' @export
 
-assemble_table_components <- function(table_componsents) {
-  if (length(table_componsents) == 4) {
-    bind_rows(table_componsents[1:3]) -> col_groups
+assemble_table_components <- function(table_components) {
 
 
-    tabledata <- table_componsents[[4]] %>%
-      group_by(row, col, comment) %>%
-      nest() %>%
-      mutate(value = data %>% map_chr(~ .x[[1, 1]])) %>%
-      select(-data)
+  table_component_data <-  list()
 
-    map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
-      reduce(full_join)
-  } else {
-    bind_rows(table_componsents[1:2]) -> col_groups
+  if(table_components %$% exists("row_groups")){table_component_data <- table_component_data %>% append(list(table_components$row_groups))}
+  if(table_components %$% exists("col_groups")){table_component_data <- table_component_data %>% append(list(table_components$col_groups))}
+  if(table_components %$% exists("meta_df")){table_component_data <- table_component_data %>% append(list(table_components$meta_df))}
+
+  col_groups <- bind_rows(table_component_data)
+
+  tabledata <- table_components$tabledata
+
+  map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
+    reduce(full_join)
 
 
-    tabledata <- table_componsents[[3]] %>%
-      group_by(row, col, comment) %>%
-      nest() %>%
-      mutate(value = data %>% map_chr(~ .x[[1, 1]])) %>%
-      select(-data)
-
-    map2(col_groups$data, col_groups$direction, ~ enhead_tabledata(header_data = .x, direction = .y, values = tabledata)) %>%
-      reduce(full_join)
-  }
 }

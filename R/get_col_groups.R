@@ -11,7 +11,7 @@
 #' @export
 
 
-get_col_groups <- function(sheet, value_ref, formats) {
+get_col_groups <- function(sheet, value_ref, formats, ignore_bolding = FALSE, ignore_indenting = FALSE,  ignore_italics = FALSE) {
 
 
   # Get column cells
@@ -33,21 +33,10 @@ get_col_groups <- function(sheet, value_ref, formats) {
   # Get format information
   col_df <-
     col_df %>%
-    mutate(indent = local_format_id %>%
-      map_int(possibly({
-        ~ formats$local$alignment[["indent"]][[.x]]
-      }, 0)) %>%
-      unlist()) %>%
-    mutate(bold = local_format_id %>%
-      map_lgl(possibly({
-        ~ formats$local$font[["bold"]][[.x]]
-      }, F)) %>%
-      unlist()) %>%
-    mutate(italic = local_format_id %>%
-      map_lgl(possibly({
-        ~ formats$local$font[["italic"]][[.x]]
-      }, F)) %>%
-      unlist())
+    mutate(bold = ifelse(ignore_bolding, NA,local_format_id %>% get_bolding_vec(sheet_format = formats))) %>%
+    mutate(indent = ifelse(ignore_indenting, NA,local_format_id %>% get_indenting_vec(sheet_format = formats))) %>%
+    mutate(italic = ifelse(ignore_italics, NA,local_format_id %>% get_italics_vec(sheet_format = formats)))
+
 
   # Nest column groups
   col_df <-

@@ -4,7 +4,7 @@
 \alias{get_tabledata}
 \title{get_tabledata}
 \usage{
-get_tabledata(sheet, value_ref)
+get_tabledata(sheet, value_ref, numeric_values)
 }
 \arguments{
 \item{sheet}{sheet object read in by \code{tidyxl::xlsx_cells}}

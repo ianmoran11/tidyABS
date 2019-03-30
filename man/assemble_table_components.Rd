@@ -4,7 +4,7 @@
 \alias{assemble_table_components}
 \title{assemble_table_components}
 \usage{
-assemble_table_components(table_componsents)
+assemble_table_components(table_components)
 }
 \arguments{
 \item{table_components}{produced by \code{process_sheet}}

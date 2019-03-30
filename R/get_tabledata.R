@@ -8,9 +8,9 @@
 #'
 
 
-get_tabledata <- function(sheet, value_ref) {
+get_tabledata <- function(sheet, value_ref, numeric_values) {
 
-
+table_data <-
   sheet %>%
     filter(
       !is_blank | !is.na(comment),
@@ -22,4 +22,14 @@ get_tabledata <- function(sheet, value_ref) {
     filter(is.na(merged)) %>%
     mutate(value = coalesce(as.character(numeric), as.character(character), as.character(logical), as.character(date))) %>%
     select(row, col, value, comment)
+
+if(numeric_values){
+
+  table_data <-
+    table_data %>%
+    mutate(value = as.numeric(value))
+
+}
+table_data
+
 }

@@ -13,7 +13,7 @@
 #' @export
 
 
-get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_groups) {
+get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_groups, ignore_bolding = FALSE, ignore_indenting = FALSE,  ignore_italics = FALSE) {
 
 
   # Get row name cells
@@ -31,27 +31,14 @@ get_row_groups <- function(sheet, value_ref, col_groups, formats, added_row_grou
   }
 
 
-
-
   # Get row name cell format information
   row_name_df <-
     row_name_df %>%
     mutate(col_temp = col) %>%
-    mutate(indent = local_format_id %>%
-      map_int(possibly({
-        ~ formats$local$alignment[["indent"]][[.x]]
-      }, 0L)) %>%
-      unlist()) %>%
-    mutate(bold = local_format_id %>%
-      map_lgl(possibly({
-        ~ formats$local$font[["bold"]][[.x]]
-      }, F)) %>%
-      unlist()) %>%
-    mutate(italic = local_format_id %>%
-      map_lgl(possibly({
-        ~ formats$local$font[["italic"]][[.x]]
-      }, F)) %>%
-      unlist())
+    mutate(bold = ifelse(ignore_bolding, NA,local_format_id %>% get_bolding_vec(sheet_format = formats))) %>%
+    mutate(indent = ifelse(ignore_indenting, NA,local_format_id %>% get_indenting_vec(sheet_format = formats))) %>%
+    mutate(italic = ifelse(ignore_italics, NA,local_format_id %>% get_italics_vec(sheet_format = formats)))
+
 
   # Add manually identified row groups
   if (!is.null(added_row_groups)) {
@@ -149,4 +136,26 @@ get_row_sum <- function(data, sheet) {
     )) %>%
     summarise(row_sum_values = sum(row_sum_values, na.rm = T)) %>%
     pull(row_sum_values)
+}
+
+
+#' get indent
+#'
+#' This function is used to identify whether rows have a Wester or NNW orientation to data
+#' @param data  a row_name_df object
+#' @param sheet  a row_name_df object
+#'
+#' @export
+
+sdfdsf <- function(data, sheet) {
+  df %>%
+  mutate(indent = local_format_id %>%
+           map_int(possibly({
+             ~ formats$local$alignment[["indent"]][[.x]]
+           }, 0L)))
+
+
+
+
+
 }

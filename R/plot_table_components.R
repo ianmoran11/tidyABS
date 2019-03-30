@@ -13,10 +13,14 @@
 
 
 plot_table_components <- function(processed_sheet) {
-  if (length(processed_sheet) == 4) {
+
+
+
+  processed_sheet_headers <-
+    processed_sheet[1:(length(processed_sheet) -1)]
+
     temp <-
-      processed_sheet %>%
-      .[1:3] %>%
+      processed_sheet_headers %>%
       map(~ .x %>% dplyr::select(type = 1, direction, data)) %>%
       bind_rows() %>%
       unnest()
@@ -27,23 +31,7 @@ plot_table_components <- function(processed_sheet) {
       temp %>%
       mutate(value = coalesce(!!!syms(value_cols))) %>%
       select(type, direction, row, col, value) %>%
-      bind_rows(processed_sheet[[4]] %>% mutate(type = "data"))
-  } else {
-    temp <-
-      processed_sheet %>%
-      .[1:2] %>%
-      map(~ .x %>% dplyr::select(type = 1, direction, data)) %>%
-      bind_rows() %>%
-      unnest()
-
-    value_cols <- names(temp)[str_detect(names(temp), "^col_|^row_|^meta_")]
-
-    temp_01 <-
-      temp %>%
-      mutate(value = coalesce(!!!syms(value_cols))) %>%
-      select(type, direction, row, col, value) %>%
-      bind_rows(processed_sheet[[3]] %>% mutate(type = "data"))
-  }
+      bind_rows(processed_sheet[[length(processed_sheet)]] %>% mutate(type = "data"))
 
 
   # expression(symbol('\256'))

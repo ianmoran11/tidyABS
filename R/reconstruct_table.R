@@ -21,25 +21,50 @@ reconstruct_table <-
 
     #!#!#!# Use xltabr here
 
-    table_components %>%
-      assemble_table_components() %>%
-      mutate_at(.vars = vars(matches("row_")),
-                .funs = funs( ifelse(is.na(.),
-                                     NA,
-                                     paste(str_pad(as.character(row),width = 5,pad = "0"),
-                                           .,
-                                           sep = "_")))) %>%
-      mutate( cols = paste3(str_pad(as.character(col),width = 5,pad = "0"), !!!syms(names(.)[str_detect(names(.),"col_")]), sep = "_")) %>%
-      select(-row,-col,-comment) %>%
-      select(-matches("col_"))  %>%
-      mutate(value = as.numeric(value)) %>%
-      spread(cols,value) %>%
-      select(everything(), sort(names(.)[str_detect(names(.),"^[0-9]{5}")])) %>%
-      set_names(str_remove(names(.),"^[0-9]{5}_")) %>%
-      arrange(!!!syms(names(.)[str_detect(names(.),"row_")])) %>%
-      mutate_at(.vars = vars(matches("row_")),.funs = funs( ifelse(is.na(.), NA, str_remove_all(.,"[0-9]{5}_"))))
+    table_components
 
-  }
+    row_groups_present <- table_components %$% exists("row_groups")
+    col_groups_present <- table_components %$% exists("col_groups")
+
+    temp_df <-
+    table_components %>%
+      assemble_table_components()
+
+    if(row_groups_present){
+      temp_df <-
+        mutate_at(.vars = vars(matches("row_")),
+                  .funs = funs( ifelse(is.na(.),
+                                       NA,
+                                       paste(str_pad(as.character(row),width = 5,pad = "0"),
+                                             .,
+                                             sep = "_"))))
+    }
+
+    temp_df <-
+      temp_df %>%
+        mutate( cols = paste3(str_pad(as.character(col),width = 5,pad = "0"), !!!syms(names(.)[str_detect(names(.),"col_")]), sep = "_")) %>%
+        select(-col,-comment) %>%
+        select(-matches("col_"))  %>%
+        mutate(value = as.numeric(value)) %>%
+        spread(cols,value) %>%
+        select(everything(), sort(names(.)[str_detect(names(.),"^[0-9]{5}")])) %>%
+        set_names(str_remove(names(.),"^[0-9]{5}_")) %>%
+        dplyr::select(-row)
+
+
+    if(row_groups_present){
+
+      temp_df <-
+      temp_df %>%
+          arrange(!!!syms(names(.)[str_detect(names(.),"row_")])) %>%
+          mutate_at(.vars = vars(matches("row_")),.funs = funs( ifelse(is.na(.), NA, str_remove_all(.,"[0-9]{5}_"))))
+
+    }
+
+
+    temp_df
+
+    }
 
 #' paste3
 #'
@@ -58,5 +83,7 @@ paste3 <- function(...,sep=", ") {
   is.na(ret) <- ret==""
   ret
 }
+
+
 
 

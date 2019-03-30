@@ -17,9 +17,10 @@ Suggests:
 Imports: 
     tidyxl,
     unpivotr,
-    magrittr,
     dplyr,
     purrr,
     stringi,
     forcats,
     cellranger
+Depends: 
+    magrittr

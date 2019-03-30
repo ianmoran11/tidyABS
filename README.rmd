@@ -30,7 +30,8 @@ The tidyABS package is not available on CRAN. It can be installed from github wi
  
 ```{r eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("ianmoran11/tidyABS")
+#devtools::install_github("ianmoran11/tidyABS")
+devtools::install()
 ```
 
 ## Usage

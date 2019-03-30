@@ -20,7 +20,8 @@ github with the following script:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ianmoran11/tidyABS")
+#devtools::install_github("ianmoran11/tidyABS")
+devtools::install()
 ```
 
 ## Usage
@@ -41,15 +42,14 @@ tidy_aus_industry_df <-
   assemble_table_components()
 
 tidy_aus_industry_df %>% str()
-#> Classes 'tbl_df', 'tbl' and 'data.frame':    1668 obs. of  8 variables:
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    1668 obs. of  7 variables:
 #>  $ row         : int  8 8 8 8 8 8 8 8 9 9 ...
 #>  $ col         : int  2 3 4 5 6 7 8 9 2 3 ...
-#>  $ comment     : chr  NA NA NA NA ...
 #>  $ value       : chr  "485" "5843" "54410" "57577" ...
+#>  $ comment     : chr  NA NA NA NA ...
+#>  $ row_group_01: chr  "2006–07" "2006–07" "2006–07" "2006–07" ...
 #>  $ col_group_01: chr  "Employment at end of June" "Wages and salaries" "Sales and service income" "Total income" ...
 #>  $ col_group_02: chr  "'000" "$m" "$m" "$m" ...
-#>  $ row_group_01: chr  "2006–07" "2006–07" "2006–07" "2006–07" ...
-#>  $ row_group_02: chr  "AGRICULTURE, FORESTRY AND FISHING" "AGRICULTURE, FORESTRY AND FISHING" "AGRICULTURE, FORESTRY AND FISHING" "AGRICULTURE, FORESTRY AND FISHING" ...
 ```
 
 ### Examples
@@ -88,7 +88,7 @@ ai_processed <- process_sheet(path = ai_path, sheets = "Table_1")
 ai_processed %>% str(1)
 #> List of 3
 #>  $ col_groups:Classes 'tbl_df', 'tbl' and 'data.frame':  2 obs. of  10 variables:
-#>  $ row_groups:Classes 'tbl_df', 'tbl' and 'data.frame':  2 obs. of  11 variables:
+#>  $ row_groups:Classes 'tbl_df', 'tbl' and 'data.frame':  1 obs. of  11 variables:
 #>  $ tabledata :Classes 'tbl_df', 'tbl' and 'data.frame':  1668 obs. of  4 variables:
 ```
 
@@ -118,29 +118,36 @@ inspect_table_components(ai_processed)
 #> 
 #> $row_groups
 #> $row_groups[[1]]
-#>  [1] "2006–07" "2007–08" "2008–09" "2009–10" "2010–11" "2011–12" "2012–13"
-#>  [8] "2013–14" "2014–15" "2015–16" "2016–17"
-#> 
-#> $row_groups[[2]]
 #>  [1] "AGRICULTURE, FORESTRY AND FISHING"              
-#>  [2] "MINING"                                         
-#>  [3] "MANUFACTURING"                                  
-#>  [4] "ELECTRICITY, GAS, WATER AND WASTE SERVICES"     
-#>  [5] "CONSTRUCTION"                                   
-#>  [6] "WHOLESALE TRADE"                                
-#>  [7] "RETAIL TRADE"                                   
-#>  [8] "ACCOMMODATION AND FOOD SERVICES"                
-#>  [9] "TRANSPORT, POSTAL AND WAREHOUSING"              
-#> [10] "INFORMATION MEDIA AND TELECOMMUNICATIONS"       
-#> [11] "RENTAL, HIRING AND REAL ESTATE SERVICES"        
-#> [12] "PROFESSIONAL, SCIENTIFIC AND TECHNICAL SERVICES"
-#> [13] "ADMINISTRATIVE AND SUPPORT SERVICES"            
-#> [14] "PUBLIC ADMINISTRATION AND SAFETY (PRIVATE)"     
-#> [15] "EDUCATION AND TRAINING (PRIVATE)"               
-#> [16] "HEALTH CARE AND SOCIAL ASSISTANCE (PRIVATE)"    
-#> [17] "ARTS AND RECREATION SERVICES"                   
-#> [18] "OTHER SERVICES"                                 
-#> [19] "TOTAL SELECTED INDUSTRIES"                      
+#>  [2] "2006–07"                                        
+#>  [3] "2007–08"                                        
+#>  [4] "2008–09"                                        
+#>  [5] "2009–10"                                        
+#>  [6] "2010–11"                                        
+#>  [7] "2011–12"                                        
+#>  [8] "2012–13"                                        
+#>  [9] "2013–14"                                        
+#> [10] "2014–15"                                        
+#> [11] "2015–16"                                        
+#> [12] "2016–17"                                        
+#> [13] "MINING"                                         
+#> [14] "MANUFACTURING"                                  
+#> [15] "ELECTRICITY, GAS, WATER AND WASTE SERVICES"     
+#> [16] "CONSTRUCTION"                                   
+#> [17] "WHOLESALE TRADE"                                
+#> [18] "RETAIL TRADE"                                   
+#> [19] "ACCOMMODATION AND FOOD SERVICES"                
+#> [20] "TRANSPORT, POSTAL AND WAREHOUSING"              
+#> [21] "INFORMATION MEDIA AND TELECOMMUNICATIONS"       
+#> [22] "RENTAL, HIRING AND REAL ESTATE SERVICES"        
+#> [23] "PROFESSIONAL, SCIENTIFIC AND TECHNICAL SERVICES"
+#> [24] "ADMINISTRATIVE AND SUPPORT SERVICES"            
+#> [25] "PUBLIC ADMINISTRATION AND SAFETY (PRIVATE)"     
+#> [26] "EDUCATION AND TRAINING (PRIVATE)"               
+#> [27] "HEALTH CARE AND SOCIAL ASSISTANCE (PRIVATE)"    
+#> [28] "ARTS AND RECREATION SERVICES"                   
+#> [29] "OTHER SERVICES"                                 
+#> [30] "TOTAL SELECTED INDUSTRIES"                      
 #> 
 #> 
 #> $tabledata
@@ -168,15 +175,14 @@ Finally, we can assemble the components into a tidy data frame using
 assemble_table_components(ai_processed) %>%
   glimpse()
 #> Observations: 1,668
-#> Variables: 8
+#> Variables: 7
 #> $ row          <int> 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 1...
 #> $ col          <int> 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5, 6, 7, 8, 9, 2...
-#> $ comment      <chr> NA, NA, NA, NA, NA, "estimate has a relative stan...
 #> $ value        <chr> "485", "5843", "54410", "57577", "52046", "5461",...
+#> $ comment      <chr> NA, NA, NA, NA, NA, "estimate has a relative stan...
+#> $ row_group_01 <chr> "2006–07", "2006–07", "2006–07", "2006–07", "2006...
 #> $ col_group_01 <chr> "Employment at end of June", "Wages and salaries"...
 #> $ col_group_02 <chr> "'000", "$m", "$m", "$m", "$m", "$m", "$m", "$m",...
-#> $ row_group_01 <chr> "2006–07", "2006–07", "2006–07", "2006–07", "2006...
-#> $ row_group_02 <chr> "AGRICULTURE, FORESTRY AND FISHING", "AGRICULTURE...
 ```
 
 ### Example 2: Environmental-Economic Accounts
@@ -225,15 +231,13 @@ Finally, we can assemble the components into a tidy dataframe using
 assemble_table_components(eea_processed) %>%
   glimpse()
 #> Observations: 156
-#> Variables: 8
+#> Variables: 6
 #> $ row          <int> 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8...
 #> $ col          <int> 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3,...
-#> $ comment      <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
 #> $ value        <chr> "13532", "14352", "14075", "14658", "15085", "155...
+#> $ comment      <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+#> $ row_group_01 <chr> "Crude oil and LPG", "Crude oil and LPG", "Crude ...
 #> $ col_group_01 <chr> "2003–04", "2004–05", "2005–06", "2006–07", "2007...
-#> $ row_group_01 <chr> "Energy Taxes ", "Energy Taxes ", "Energy Taxes "...
-#> $ row_group_02 <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
-#> $ row_group_03 <chr> "Crude oil and LPG", "Crude oil and LPG", "Crude ...
 ```
 
 ### Example 3: Consumer Price Index (time series)
@@ -276,8 +280,9 @@ assemble_table_components(cpi_processed) %>%
 #> Variables: 15
 #> $ row          <int> 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 1...
 #> $ col          <int> 2, 3, 4, 5, 6, 7, 9, 10, 2, 3, 4, 5, 6, 7, 9, 10,...
-#> $ comment      <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
 #> $ value        <chr> "3.7", "3.8", "3.7", "3.8", "3.7", "3.8", "3.9", ...
+#> $ comment      <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+#> $ row_group_01 <chr> "1948-09-01", "1948-09-01", "1948-09-01", "1948-0...
 #> $ col_group_01 <chr> "Index Numbers ;  All groups CPI ;  Sydney ;", "I...
 #> $ col_group_02 <chr> "Index Numbers", "Index Numbers", "Index Numbers"...
 #> $ col_group_03 <chr> "Original", "Original", "Original", "Original", "...
@@ -288,5 +293,4 @@ assemble_table_components(cpi_processed) %>%
 #> $ col_group_08 <chr> "2018-12-01", "2018-12-01", "2018-12-01", "2018-1...
 #> $ col_group_09 <chr> "282", "282", "282", "282", "282", "282", "282", ...
 #> $ col_group_10 <chr> "A2325806K", "A2325811C", "A2325816R", "A2325821J...
-#> $ row_group_01 <chr> "1948-09-01", "1948-09-01", "1948-09-01", "1948-0...
 ```
