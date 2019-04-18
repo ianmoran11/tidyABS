@@ -12,7 +12,7 @@
 #' @export
 
 process_sheet <-
-  function(path, sheets, table_range = NULL, manual_value_references = NULL, row_groups_present = TRUE, col_groups_present = TRUE,
+  function(path, sheets, table_range = NULL, manual_value_references = NULL, row_groups_present = TRUE, header_labels_present = TRUE,
            added_row_groups = NULL, keep_meta_data = FALSE, ignore_bolding = FALSE, ignore_indenting = FALSE,  ignore_italics = FALSE,
            numeric_values = FALSE,strict_merging = TRUE) {
 
@@ -68,16 +68,16 @@ process_sheet <-
 
     added_row_groups_temp <- added_row_groups
 
-    if(col_groups_present){
-      col_groups <- get_col_groups(sheet = sheet, value_ref = value_ref, formats = formats, ignore_bolding = FALSE, ignore_indenting = FALSE,  ignore_italics = FALSE)
-      unique_cols <- col_groups$data %>% map(3) %>% map(unique)
+    if(header_labels_present){
+      header_labels <- get_header_labels(sheet = sheet, value_ref = value_ref, formats = formats, ignore_bolding = FALSE, ignore_indenting = FALSE,  ignore_italics = FALSE)
+      unique_cols <- header_labels$data %>% map(3) %>% map(unique)
     }
 
 
     if(row_groups_present){
       row_groups <- get_row_groups(
         sheet = sheet, value_ref = value_ref,
-        formats = formats, col_groups = col_groups, added_row_groups = added_row_groups_temp,
+        formats = formats, header_labels = header_labels, added_row_groups = added_row_groups_temp,
         ignore_bolding = ignore_bolding, ignore_indenting = ignore_indenting,  ignore_italics = ignore_italics)
 
       unique_rows <- row_groups$data %>% map(3) %>% map(unique)
@@ -85,7 +85,7 @@ process_sheet <-
 
 
     if(keep_meta_data){
-      meta_df <- get_meta_df(sheet = sheet, value_ref = value_ref, formats = formats, col_groups = col_groups)
+      meta_df <- get_meta_df(sheet = sheet, value_ref = value_ref, formats = formats, header_labels = header_labels)
       unique_meta <- meta_df$data %>% map(3) %>% map(unique)
     }
 
@@ -96,16 +96,16 @@ process_sheet <-
 
 
 
-    if(( !exists("meta_df")) & col_groups_present == TRUE ){
+    if(( !exists("meta_df")) & header_labels_present == TRUE ){
 
       keep_meta_data <-  FALSE
 
-    }else if(col_groups_present == TRUE){
+    }else if(header_labels_present == TRUE){
 
       joint_col <-
         full_join(
           tibble(values = unique_cols) %>%
-            mutate(col_group = row_number()) %>%
+            mutate(header_label = row_number()) %>%
             unnest(),
           tibble(values = unique_meta) %>%
             mutate(meta_group = row_number()) %>%
@@ -114,18 +114,18 @@ process_sheet <-
 
       cols_to_keep <-
         joint_col %>%
-        group_by(col_group) %>%
-        filter(!is.na(col_group)) %>%
+        group_by(header_label) %>%
+        filter(!is.na(header_label)) %>%
         summarise(keep = 1 != sum(!is.na(meta_group) / length(meta_group), na.rm = TRUE)) %>%
         pull(keep)
 
-      col_groups <- col_groups[cols_to_keep, ]
+      header_labels <- header_labels[cols_to_keep, ]
 
     }
 
 
     component_list <- list()
-    if(col_groups_present){component_list <- component_list %>% append(list(col_groups = col_groups))}
+    if(header_labels_present){component_list <- component_list %>% append(list(header_labels = header_labels))}
     if(row_groups_present){component_list <- component_list %>% append(list(row_groups = row_groups))}
     if(keep_meta_data){component_list <- component_list %>% append(list(meta_df = meta_df))}
 

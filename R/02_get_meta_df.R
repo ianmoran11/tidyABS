@@ -7,24 +7,24 @@
 #' @param sheet sheet object read in by `tidyxl::xlsx_cells`
 #' @param value_ref data frame representing corners of numeric cells in excel sheet
 #' @param formats format object read in by `tidyxl::xlsx_cells`
-#' @param col_groups format object read in by `tidyxl::xlsx_cells`
+#' @param header_labels format object read in by `tidyxl::xlsx_cells`
 #'
 #' @export
 
 
-get_meta_df <- function(sheet, value_ref, col_groups, formats) {
+get_meta_df <- function(sheet, value_ref, header_labels, formats) {
 
   ## Used for debugging
   # sheet <- master_df_01$sheet[[100]]
   # value_ref <- master_df_01$value_ref[[100]]
   # formats <- master_df_01$formats[[100]]
-  # col_groups <- master_df_01$col_groups[[100]]
+  # header_labels <- master_df_01$header_labels[[100]]
   # Get cells
   meta_df <-
     sheet %>%
     filter(
       !is_blank,
-      row <= max(col_groups$max_row),
+      row <= max(header_labels$max_row),
       col < value_ref$min_col
     )
 

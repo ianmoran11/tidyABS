@@ -25,7 +25,7 @@ plot_table_components <- function(processed_sheet) {
       bind_rows() %>%
       unnest()
 
-    value_cols <- names(temp)[str_detect(names(temp), "^col_|^row_|^meta_")]
+    value_cols <- names(temp)[str_detect(names(temp), "^header_|^row_|^meta_")]
 
     temp_01 <-
       temp %>%
